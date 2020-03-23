@@ -1,2 +1,1 @@
-# osm_crim
- 
+Material for using Open Street Map in crime and place research.

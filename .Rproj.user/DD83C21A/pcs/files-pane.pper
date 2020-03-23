@@ -1,0 +1,9 @@
+{
+    "path" : "~/GitHub/osm_crim",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}
