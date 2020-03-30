@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1585554943293.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4186104945",
+    "id" : "FF12B42F",
+    "lastKnownWriteTime" : 1585577599,
+    "last_content_update" : 1585577599205,
+    "path" : "~/GitHub/osm_crim/scripts/osm_explore.R",
+    "project_path" : "scripts/osm_explore.R",
+    "properties" : {
+        "cursorPosition" : "9,27",
+        "scrollLine" : "22",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
