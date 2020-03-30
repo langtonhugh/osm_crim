@@ -1,0 +1,3 @@
+https://cran.r-project.org/web/packages/osmdata/vignettes/osmdata.html
+
+https://wiki.openstreetmap.org/wiki/Contribute_map_data
