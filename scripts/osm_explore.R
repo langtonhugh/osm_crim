@@ -10,10 +10,10 @@ library(tidyr)
 # an area using the latitude and longitude coordinates, but it is generally
 # easier to use a search term. For instance
 
-bb <- getbb(place_name = "greater london united kingdom", format_out = "sf_polygon") 
+bb <- getbb(place_name = "washington dc", format_out = "sf_polygon") 
 
 p <- opq(bbox = bb) %>%                                           # select bounding box
-  add_osm_feature(key = 'amenity', value = 'bicycle_parking') %>% # select features
+  add_osm_feature(key = 'amenity', value = 'bar') %>% # select features
   osmdata_sf()                                                    # specify class (sf or sp)
 
 p
