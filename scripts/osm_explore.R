@@ -8,7 +8,7 @@ library(tidyr)
 # All queries begin with a bounding box specification i.e. the study region.
 # This can be obtained manually, which requires some existing knowledge about
 # an area using the latitude and longitude coordinates, but it is generally
-# easier to use a search term.
+# easier to use a search term. For instance
 
 bb <- getbb(place_name = "greater london united kingdom", format_out = "sf_polygon") 
 
