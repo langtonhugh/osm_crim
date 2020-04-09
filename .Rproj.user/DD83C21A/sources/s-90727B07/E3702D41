@@ -7,14 +7,14 @@
     "folds" : "",
     "hash" : "0",
     "id" : "E3702D41",
-    "lastKnownWriteTime" : 1586440024,
-    "last_content_update" : 1586440024827,
+    "lastKnownWriteTime" : 1586443549,
+    "last_content_update" : 1586443549583,
     "path" : "~/GitHub/osm_crim/draft_chapter.Rmd",
     "project_path" : "draft_chapter.Rmd",
     "properties" : {
         "chunk_output_type" : "console",
-        "cursorPosition" : "24,52",
-        "scrollLine" : "12",
+        "cursorPosition" : "155,0",
+        "scrollLine" : "137",
         "source_window_id" : ""
     },
     "read_only" : false,

@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1586443278957.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "3BCDBC13",
+    "lastKnownWriteTime" : 1586440024,
+    "last_content_update" : 1586443278957,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "106E6202",
+        "caption" : "bikes_points_sf",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=bikes_points_sf&cache_key=106E6202",
+        "displayedObservations" : 19968,
+        "environment" : "",
+        "expression" : "bikes_points_sf",
+        "object" : "bikes_points_sf",
+        "preview" : 0,
+        "totalObservations" : 19968,
+        "variables" : 115
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

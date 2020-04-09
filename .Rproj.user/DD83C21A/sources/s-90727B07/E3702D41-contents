@@ -143,6 +143,15 @@ ggplot() +
   theme(legend.position = "bottom")
 ```
 
+### Bus stop example
+
+```{r}
+bus_sf <- opq(bbox = bb_sf) %>%                                 # select bounding box
+  add_osm_feature(key = 'highway', value = 'bus_stop') %>%      # select features
+  osmdata_sf() %>%                                              # specify class
+  trim_osmdata(bb_poly = bb_sf)  
+```
+
 ## Future of open data
 
 - Threats to its sustainability (e.g. licence expiry).
