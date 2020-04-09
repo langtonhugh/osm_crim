@@ -22,7 +22,7 @@ library(tidyr)
 - Topic definition.
 - Advantages and exciting prospects in open data.
 - Chapter structure outline.
-- Prerequisites (reference _Geocomputation with R_)
+- Prerequisites (reference _Geocomputation with R_).
 
 ## Background
 
@@ -59,9 +59,20 @@ library(tidyr)
 - We focus on `sf` as its compatible with the `tidyverse`.
 - Outline the key documentation and references.
 
-### Walk-through
+## Walk-through
 
-All queries begin with a bounding box specification to define the study region. This can be obtained manually, which requires some existing knowledge about an area using the latitude and longitude coordinates, but it is generally easier to use a search term. Here, we select Greater London in the United Kingdom using the `getbb()` function, specifying that we want the content as a simple features (sf) polygon. 
+First, ensure that you have the relevant packages installed in R. Although the main package used in this demonstration is `osmdata`, for querying the Open Street Map API, we use a number of additional packages for data handling and visualisation. If you don't have these packages installed, use the `install.packages()` function prior to loading each one with `library()`.
+
+```{r, eval = F}
+library(osmdata)
+library(ggplot2)
+library(sf)
+library(readr)
+library(dplyr)
+library(tidyr)
+```
+
+All queries begin with a bounding box specification to define the study region. This can be obtained manually, which requires some existing knowledge about an area using the latitude and longitude coordinates, but it is generally easier to use a search term. Here, we select Greater London in the United Kingdom using the `getbb()` function, specifying that we want the content as a simple features (sf) polygon.
 
 ```{r}
 bb_sf <- getbb(place_name = "greater london united kingdom", format_out = "sf_polygon")
