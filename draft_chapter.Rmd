@@ -25,7 +25,6 @@ library(tidyr)
 
 Access to most data sets have traditionally been restricted to those who have the means to collect these themselves or to pay for, or otherwise gain access to them. Even when access is granted, this is often with conditions that circumscribe how the data can be used through licensing or policy [@kitchin2014data]. This lead to unequal access to data and the subsequent insight that can be attained from them. 
 
-
 Open data are a response to these restrictions, seeking to open up data without restrictions, to broaden access and participation in research deriving insight from all sorts of data sets, removing the need to ask permission or negotiate access [@manovich2011trending]. Not only that, but using open data can lead to all sorts of novel insight within the domain of criminology and crime analysis specifically by tapping into constructs and processes difficult to capture through surveys, interviews, and other traditional measures [@solymosi2018role]. Therefore, it is important that social scientists, researchers, crime analysts, and others interested in making sense of the social world around them have the skills and know-how to access and accurately interpret, assess and analyse such data sets. 
 
 
