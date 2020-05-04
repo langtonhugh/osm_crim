@@ -11,7 +11,7 @@ bibliography: refs.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+knitr::opts_chunk$set(echo = T, message = F, warning = F)
 library(jsonlite)
 library(osmdata)
 library(ggplot2)
@@ -23,70 +23,47 @@ library(tidyr)
 
 # Introduction
 
-Access to most data sets have traditionally been restricted to those who have the means to collect these themselves or to pay for, or otherwise gain access to them. Even when access is granted, this is often with conditions that circumscribe how the data can be used through licensing or policy [@kitchin2014data]. This lead to unequal access to data and the subsequent insight that can be attained from them. 
+Access to data in crime and place research, and even criminology more broadly, has traditionally been reserved to those who have the means to collect fresh data themselves, pay for access, or obtain data through formal data sharing agreements. Even when access is granted, the usage of these data often comes with conditions that circumscribe how the data can be used through licensing or policy [@kitchin2014data]. The public dissemination of findings which emerge from analysis might even be subject to restrictions. This can lead to unequal access, controlled usage and curb the diffusion of findings, severely limiting the insight that can be attained from data.
 
-Open data are a response to these restrictions, seeking to open up data without restrictions, to broaden access and participation in research deriving insight from all sorts of data sets, removing the need to ask permission or negotiate access [@manovich2011trending]. Not only that, but using open data can lead to all sorts of novel insight within the domain of criminology and crime analysis specifically by tapping into constructs and processes difficult to capture through surveys, interviews, and other traditional measures [@solymosi2018role]. Therefore, it is important that social scientists, researchers, crime analysts, and others interested in making sense of the social world around them have the skills and know-how to access and accurately interpret, assess and analyse such data sets. 
+Open data are a response to these shortcomings, broadening access and participation in research, removing the requirement for permissions, formal agreements and negotiations [@manovich2011trending]. Not only this, but open data can also lead to all sorts of novel insight within criminology and cime and place research, tapping into constructs and processes which are difficult to capture through surveys, interviews and other traditional meaures [@solymosi2018role]. As such, it is important that social scientists, researchers, crime analysts, and others interested in making sense of the social world around them have the skills and know-how to access, accurately interpret, assess and analyse open data sets.
 
-
-This chapter aims to lay the groundwork for developing such skills, providing both a framework to approach and meainingfully interpret open data regarding understanding its origin and any limitations associated with that, and a practical hands-on guide to accessing, wrangling, and analysting open data to draw conclusions about crime and place. We achieve this by first giving a background on open data, discussing the key types of open data out there, critically assessing the strengths and limiations of open data, and building a how-to guide checklist for researchers to follow when approaching an open data source. Finally, we work through an example that shows how to access, wrangle, link, and interpret open data from various sources, providing a template to follow. 
-
-
-- Prerequisites (reference _Geocomputation with R_).
+This chapter aims to lay the groundwork for developing such skills by providing a framework to approach and meaningfully interpret open data, in terms of understanding its origin and the implications this might have on the data itself. The chapter also offers a practical hands-on guide to accessing, wrangling, and analysing open data in order to draw conclusions about crime and place. We achieve this by first giving a background on open data, discussing the key types of data out there, critically assessing the strengths and limitations, and building a how-to guide checklist for researchers to follow when approaching an open data source. Finally, we work through an example that shows how to access, wrangle, link, and interpret open data from various sources, providing a template which can be applied in other research areas.
 
 # Background
 
 ## What is open data?
 
-What do we mean when we refer to **open data**? According to @dietrich2009open in the Open Data Handbook, open data is "data that can be freely used, re-used and redistributed by anyone - subject only, at most, to the requirement to attribute and sharealike."
+First, it is useful to clarify what we mean when we refer to 'open data'. The _Open Data Handbook_, compiled by the Open Knowledge Foundation, states that open data are "data that can be freely used, re-used and redistributed by anyone - subject only, at most, to the requirement to attribute and sharealike" [@dietrich2009open]. Specifically, open data can be defined along three key domains [@knowledge2016open].
 
+- **Availability and Access:** the data must be accessible via a public domain, at no more than a reasonable reproduction cost, and through a convenient medium, such as the internet. Ideally, it should be machine-readable and modifiable. For example, it should be downloadable from a website as an unlocked spreadsheet, or json file, rather than presented as a summary table in a PDF document.
+- **Re-use and Redistribution:** the data must be provided under conditions that allow free use, such as modification, separation, or compilation of the data and permit re-use and redistribution including the intermixing (merging) with other datasets.
+- **Universal Participation:** everyone should be allowed to use, re-use and redistribute the data and its derivatives without restriction. For instance, restrictions that only allow non-commercial or educational usage would not constitute open data.
 
-They summarise the content of the Open Definition document published by the @knowledge2016open into three key tenants of open data: 
+In short, 'open data' should be data that are readily and publicly available, in a usable format, and without reistrictions on usage, modification and re-distribution.
 
-- **Availability and Access:** the data must be available in the publica domain, accessible at no more than a reasonable reproduction cost. It should be in a machine readable form that is easily accessed and modified. For example, it should be downloadable as a spreadsheet, or json file, rather than presented as a summary table in a PDF document. 
-- **Re-use and Redistribution:** the data must be provided under terms that allow free use, including modification, separation, or compilation of the data. permit re-use and redistribution including the intermixing with other datasets.
-- **Universal Participation:** everyone must be able to use, re-use and redistribute the data and its derivatives without restriction (eg: 'non-commercia' restrictions or use in education purposes only) 
-
-
----
-In short, open data should be data that is available in a useful format for analysis that can be used by anyone for any purpose. 
----
-
-
-Open data practices vary within and between countires. For example, the United States of America have a history of making public sector data sets available, while the United Kingdom is much more strict in releasing their data under a licence or for a fee [@kitchin2014data]. The Global Open Data Index [@globopendata] is one tool for tracking the annual global benchmark for publication of open government data by countries, providing a rank which shows how well governments across the world follow open data practices.
-
-
+Open data practices, and the extent to which it is a reality, vary both within and between countries. For example, the United States have a history of making public sector data sets openly available. The United Kingdom can be more strict, releasing data under a licence ('Open Government Licence'), with some data requiring a fee [@kitchin2014data]. The _Global Open Data Index_ [@globopendata] is one tool for tracking the annual global benchmark for publication of open government data by countries. It providing a rank which indicates how well governments across the world follow open data practices on aggregate, but also according to specific domains. Many of these have direct relevance to crime and place research, such as administrative boundaries and geographic locations (e.g. coordinates).
 
 ## What are types of open data?
 
-Here we formulate a typology of open data sets based on their origin. 
+Now we have a reasonable idea about what open data is in a broad sense, we can consider the different types of open data which you might come across. Here, we formulate a typology of open data sets based on their origin to help provide an overview.
 
-### Public sector (including publicly funded research)
+### Public sector (including publicly funded research).
 
-Much of the open data movement has focused on data generated by state agencies (often termed public sector information) or publicly funded research, given that these have been funded by the public purse for the public's benefit  [@kitchin2014data]. For example, the Global Open Data Index introduced earlier focuses specifically on governmental bodies' data publishers, identifying data gaps in these organisations, and promoting them to think about how to make their data more useable and eventually more impactful [@globopendata]. This is important as open public sector data can be .... 
+Much of the open data movement has focused on information generated by local and national state agencies, or publicly funded research. Open data has become a key component of transparency and accountability in government, given that much of the data collected has been funded by the public purse [@kitchin2014data]. In some countries, the national statistics body is independent from government, which serves to improve accountability and increase public trust in the data being collated and published. The _Global Open Data Index_ introduced earlier focuses on identifying the gaps in governmental organisations, encouraging them think about how public sector information can become more usable, and ultimately, more impactful [@globopendata].
 
-<!-- MORE HERE basically the paragraph above should really say what is public sector data, why its important (ie what can we do with it as researhcers) -->
+As researchers studying crime and place, public sector data is particularly important. Many variables thought to explain the non-random distribution of crime, offenders and victims in space are coallated and published by governmental bodies. For instance, demographic characteristics about resident populations can be collected via national censuses, with data usually released at aggregations which constitute 'neighbourhoods' - a theoretically important scale in criminology. Data describing urban structure, such as street networks, are often generated and distributed by public bodies, and can be used in street syntax analysis to assess whether the configeration of streets dictates things like violent crime victimisation [@streetsyntax2017]. In many countries, victimisation surveys are openly available for download. This is not only useful for substantive research (e.g. quantifying long-term crime trends), but also scrutiny over the reliability and accuracy in other forms of open data, such as police recorded crime records. Both of these examples represent an interesting challenge to open data principles, since data tends to be anonymised to some degree before being made available to the public. Access to the raw records is dependent on a number of requrements (e.g. background checks, contractual agreements, ICT security measures) which might exclude many individuals due to cost and practicality.
 
-
-
-Regarding opening up research data, the argument focuses not only on the need to make open data where its collection was funded by public funds, but also on the need for transparency and reproducibility. Replication is a hallmark of such open science practice, and opening up data sets used in publications in criminology and wider social sciences contributes to foster a culture of replication [@pridemore2018replication]. Open data and replications fit into the wider discourse in social sciences around open data, open review and open dialogue, which may even become (with time) policy requirements regardless of the research funding source [@vuong2017open]. There are repositories where open research data is available (osf.io, uk data service, others??). 
-
-<!-- Somehow I want to also say "keep in mind open research practices when collecting your own data, although we dont cover how to actually release and make open your own data in this chapter, read more about this somewhere... idk? -->
-
-
-
+The drive towards transparency and scrutiny of public information is further enhanced by an increasing need for replication - a hallmark for open science research practice. Opening up data sets used in criminology publications and wider social sciences fosters and facilitates a culture of replication [@pridemore2018replication]. As such, open data fits into the wider discourse around transparency, open review and open scrutiny, which (in time) may even become policy requirements irrespective of the research field or the source of funding [@vuong2017open]. Increasingly, researchers are making use of online repositories for their papers (e.g. www.osf.io), data (e.g. www.ukdataservice.ac.uk/deposit-data) and code (e.g. www.github.com), all in the name of transparency and replication. These are guidelines and tools worth considering, not just when conducting analysis on secondary data sources, but also collecting and sharing your own data for research projects.
 
 ### Private sector
 
-A more limited focus of open data activists lays on  opening up data generated by private industry, which might have more proprietary value to its creators [@kitchin2014data]. While datasets are released by private sector companies, they often are only a subset selected by the organisation. However they might still provide valuable insight. Indeed many interesting papers have been written using the data released by large private sector organisations such as Google [@stephens2017everybody], Instagram [@reece2017instagram], Uber [@davidson2017interactive] and many more. In another chapter in this book you will learn to use the free Twitter API to do just the same (see Nick and Dan's chapter link to that). 
-
+Opening up data generated by the private sector represents a significant challenge, largely due to the proprierary value to its creators [@kitchin2014data]. The aims and objectives of private companies, who have a duty to shareholders and operate in a competitive market environment, differ considerably from local and central government. That said, some datasets are released openly by private sector organisations, albiet often only a subset of what would be available as a paying customer. The website for ArcGIS, a piece of software maintained by the Environmental Systems Research Institute (ESRI), a private company, host a number of open geographic datasets on their online cloud platform (www.hub.arcgis.com/search). Indeed, many papers have made use of data collected or distributed by private organisations to explore crime and place, such as Google [@langton2017residential] and Twitter [@malleson2015impact]. In this book you will learn to use the free Twitter API for such purposes in criminology (see Section 3, Topic 7).
 
 ### Open crowdsourced data
 
-Finally, there is a specific group of open data sources that collate data collectively generated by large groups of individuals who do not specifically belong to any organisation, but instead work together on a collaborative project. These are crowdsourced data sets. Examples include Wikipedia (www.wikipedia.org), an online encyclopedia where anyone can contribute, and Flickr (www.flickr.com) an online photo gallery where anyone can upload and tag their photos. Often the organisations who maintain and monitor these data collection activities are charities or non govermental organisations that operate not for profit, but instead to provide some sort of social good. An example is the online problem reportin platform fixmystreet, where people report instances of graffiti or other environmental complaints, which can offer insight into people's experiences with incivilities [@solymosi2018crowdsourcing]. Another chapter in this book (REF CHAPTER WITH DAVID) discusses the merits and pitfalls of crowdsourced data, and what to watch out for when analysing open data of this type. 
+Finally, there is a specific group of open data sources that collate data collectively, generated by large groups of individuals who do not specifically belong to any organisation, but instead work together on a collaborative project. These are crowdsourced data sets. Examples include Wikipedia (www.wikipedia.org), an online encyclopedia where anyone can contribute, and Flickr (www.flickr.com) an online photo gallery where people can upload and tag their photos. Often, the organisations who maintain and monitor these data collection activities are charities or non-govermental organisations that do not operate for profit, but instead provide some form of social good. An example is the online reporting platform FixMyStreet (www.fixmystreet.com), where people can report problems such as instances of graffiti, vandalism or environment issues. The data has been used to explore signal crimes theory, for instance, offering insight into people's experiences with incivilities [@solymosi2018crowdsourcing]. Another chapter in this book (see Section 3, Topic 6) discusses the merits and pitfalls of crowdsourced data, and what to watch out for when analysing open data of this type.
   
-  
-## What are strengths and limitations
-
+## Strengths and limitations
 
 Each one of the above categories might have its own strengths and limitations, and it is very important to consdier the source of the data you are working with, and what might mean for what and who is represented or excluded from these data. Here we will provide a general overview, and some guidance on how to make sure you take all necessary precautions when analysing open data of any kind. 
 
@@ -208,7 +185,7 @@ Let's get started! Getting back to our problem at hand, crime at bus stops, we w
 
 First, ensure that you have the relevant packages installed in R. Although the main packages used in this demonstration are `rjson` for parsing the TfL API results and `osmdata` for querying the Open Street Map API, we use a number of additional packages for data handling and visualisation. If you don't have these packages installed, use the `install.packages()` function prior to loading each one with `library()`.
 
-```{r, eval = F}
+```{r}
 library(jsonlite)
 library(osmdata)
 library(ggplot2)
@@ -238,9 +215,9 @@ Specifically, we can scroll down to where we find "". Next to this we see the ex
 
 To see, try to take the above URL, and copy and paste it into your browser window. What do you see? It should be something like this: 
 
-
-![](img/tfl_api_browser.png)
-
+```{r tfl, out.width = "\\textwidth", fig.cap="Data from TfL"}
+knitr::include_graphics("img/tfl_api_browser.png")
+```
 
 This contains the information we requested (bus route 24 stops outbound) in a format called **JSON**, which stands for JavaScript Object Notation. JSON is an open standard way of storing and exchanging data, and will most likely be the format in which data are returned from most API calls. 
 
@@ -248,20 +225,16 @@ This contains the information we requested (bus route 24 stops outbound) in a fo
 Great, but how do we get this into R? Well this is where the `rjson` package is handy, and specifically we can use the `fromJSON()` function to parse this JSON p=object, which we can read directly from the URL into R using the `readLines()` function (base R). So, if we wanted the results of the bus route 24, we would type: 
 
 
-```{r getrt24}
-
+```{r getrt24, eval = F}
 api_call <- fromJSON(readLines("https://api.tfl.gov.uk/line/24/route/sequence/outbound"))
-
 ```
 
 
 This gives us an object (`api_call`) which contains all the information returned by the TfL API. Now JSON is slightly different to dataframes which we are more used to dealing with, in that there is nested information 
 
 
-```{r conferttodf}
-
+```{r conferttodf, eval = F}
 json_data_frame <- as.data.frame(api_call)
-
 ```
 
 
