@@ -7,6 +7,7 @@ library(dplyr)
 library(tidyr)
 library(purrr)
 library(cowplot) # maybe don't show?
+library(stringr)
 
 # OSM query ==============================================================================================
 
@@ -17,31 +18,39 @@ library(cowplot) # maybe don't show?
 
 bb_sf <- getbb(place_name = "greater london united kingdom", format_out = "sf_polygon") 
 
-osm_bus_sf <- opq(bbox = bb_sf) %>%                                # select bounding box
+osm_stat_sf <- opq(bbox = bb_sf) %>%                               # select bounding box
   add_osm_feature(key = 'public_transport', value = 'station') %>% # select features
   osmdata_sf() %>%                                                 # specify class (sf or sp)
   trim_osmdata(bb_poly = bb_sf)                                    # trim by bounding box  
 
 # View contents.
-osm_bus_sf
+osm_stat_sf
 
 # Extract points only.
-osm_bus_sf <- osm_bus_sf$osm_points 
+osm_stat_sf <- osm_stat_sf$osm_points 
 
-# Filter Northern line only.
-osm_bus_sf <- osm_bus_sf %>% 
-  filter(line == "Northern")
+# Check the network tags.
+table(osm_stat_sf$network)
+table(osm_stat_sf$operator)
 
-osm_bus_sf <- st_transform(osm_bus_sf, 27700)
+# Filter any that include "London Underground".
+osm_tube_sf <- osm_stat_sf %>% 
+  filter(str_detect(network, "London Underground"))
+
+osm_tube_sf <- st_transform(osm_tube_sf, 27700)
 bb_sf      <- st_transform(bb_sf, 27700)
 
 ggplot() +
   geom_sf(data = bb_sf) +
-  geom_sf(data = osm_bus_sf, size = 0.3) 
+  geom_sf(data = osm_tube_sf, mapping = aes(colour = line))
 
 # TfL scrape ==============================================================================================
 
 # Scape bus stops on route 24 from TfL. Warning is fine.
+api_call <- fromJSON(readLines("https://api.tfl.gov.uk/Line/Meta/Modes"))
+
+
+
 api_call <- fromJSON(readLines("https://api.tfl.gov.uk/line/northern/route/sequence/outbound"))
 
 # Extract bus stop names and the lat-long coordinates, transform to BNG.
