@@ -19,6 +19,7 @@ library(sf)
 library(readr)
 library(dplyr)
 library(tidyr)
+library(patchwork)
 ```
 
 # Introduction
@@ -153,106 +154,148 @@ Although this contains the information we requested, it is in a format called _J
 
 To keep things focused, let's request data about stop points on the Northern Line. Note how this is simply an amended version of the example provided by TfL in the API documentation.
 
-```{r getapi, eval = F}
+```{r getapi}
 api_call <- fromJSON(readLines("https://api.tfl.gov.uk/line/northern/stoppoints"))
 ```
 
-
 This gives us an object (`api_call`) which contains all the information returned by the TfL API. JSON is slightly different to tradtional data frames with rows and columns, which we are probably quite familiar with, because the data is nested. For instance, `api_call` is classed as a data frame, but upon viewing the object using `View(api_call)` you will notice that there are lists nested within it. Another way of checking this is looping the `class()` function through all the columns in the data frame using `lapply(api_call, class)`. This demonstrates an important challenge faced by researchers when using open data, because dealing with data in this format can be messy and complicated.
 
-Fortunately for us, R is more than capable of dealing with nested data. Moreover, we can see that the information we are interested in (namely, the location of underground stations) has already been successfully parsed into columns called **lon** (longitude) and **lat** (latitude), along with an identication column of the stop names called **commonNanme**. We can extract these columns, and create a spatial `sf` object using the coordinates, all in one chunk of code, using the piping operator `%>%` in the `dplyr` package. Note that we define the Coordinate Reference System (CRS) which the data has come in, and then instantly transform it into something more appropriate (a projected CRS known as the British National Grid).
+Fortunately for us, R is more than capable of dealing with nested data. Moreover, we can see that the information we are interested in (namely, the location of underground stations) has already been successfully parsed into columns called **lon** (longitude) and **lat** (latitude), along with an identification column of the station names called **commonName**. We can extract these columns, and create an `sf` point object using these coordinates, all in one chunk of code, using the piping operator `%>%` in the `dplyr` package. Note that we define the Coordinate Reference System (CRS) which the data has come in (WGS 84), and then transform it into something more appropriate (the British National Grid, a projected CRS used in the United Kingdom).
 
-```{r apispatial, eval = F}
+```{r apispatial}
 tfl_north_sf <- api_call %>% 
   select(commonName, lat, lon) %>% 
   st_as_sf(coords = c(x = "lon", y = "lat"), crs = 4326) %>% 
   st_transform(27700)
 ```
 
-<!-- insert here tutorial on parsing the api data, this is a job for next week i'm tired -->
+We can now easily visualize this data using the `ggplot2` package, which is compatable with `sf` objects.
+
+```{r tflmap}
+ggplot(tfl_north_sf) +
+  geom_sf()
+```
+
+There we have it: with just a few lines of code in R, we have directly queried the Transport for London API, a public sector source of open data, and plotted a basic map of stations on the Northern underground line.
 
 ### Using wrappers to access Open Street Map data
 
-<!-- Maybe start with the GUI-based one, and then do the below in R? -->
+Now, let's explore the equivalent data using crowdsourced open data. This approach differs from the TfL request in that our data source, Open Street Map, has a wrapper for the API built into an R package called `osmdata`. As such, rather than the API query being made directly (like we did for TfL, using the URL), we can use R code.
 
-All queries begin with a bounding box specification to define the study region. This can be obtained manually, which requires some existing knowledge about an area using the latitude and longitude coordinates, but it is generally easier to use a search term. Here, we select Greater London in the United Kingdom using the `getbb()` function, specifying that we want the content as a simple features (sf) polygon.
+Of course, unlike the TfL API, `osmdata` is an international database, so all queries begin with a bounding box specification to define the study region. This can be obtained manually, which requires some existing knowledge about an area using the latitude and longitude coordinates, but it is generally easier to use a search term. Here, we select Greater London using the `getbb()` function, specifying that we want the content as an `sf` polygon object which we name `bb_sf`.
 
 ```{r}
 bb_sf <- getbb(place_name = "greater london united kingdom", format_out = "sf_polygon")
 ```
 
-We now have our study region defined as the administrative boundaries of Greater London. This can be visualised using `ggplot2` and the _simple features_ geometry `geom_sf()` available with `sf`. Note that by default, the Coordinate Reference System (CRS) is the World Geodetic System 84.
+We now have our study region defined as the administrative boundaries of Greater London, which we can visualize quickly to check it has worked as expected.
 
 ```{r}
 ggplot(data = bb_sf) +
   geom_sf()
 ```
 
-Now we have our study region, we can scrape data from the OSM API using the `opq()` function, which is short for 'Overpass query'. This allows you to build an Overpass query, outlined in the previous section, from within the R environment. We specify the bounding box object which is our study area, and pass this through using a pipe `%>%` to `add_osm_feature()` in which we define what we want to pull from the API. As we noted earlier, features in OSM have are defined through keys and values. Here, we specify that we want amenities (the key) defined as bicycle parking (the value). This query is then piped through to `osmdata_sf()` which ensures that the resulting object is a _simple features_ class for easy plotting with `ggplot2`. We trim the features pulled from the API using `tim_osmdata()` to ensure that everything stays within the boundaries of our study region.
+Now we have our study region, we can scrape data from the OSM API using the `opq()` function. The function name is short for 'Overpass query', which is how users can query the Open Street Map API using search criteria. A common way of doing this is using 'Overpass turbo' (https://overpass-turbo.eu/) which allows you to query the database alongside an interactive map which automatically updates based on your results. In the interests of reproducibility consistently, we will make these queries from within R using the `osmdata` wrapper.
+
+First, we specify the bounding box object which is our study area (`bb_sf`), and pass this through using a pipe `%>%` to `add_osm_feature()` in which we define the feature which we want to pull from the API. Features in Open Street Map are defined through 'keys' and 'values'. Keys are used to describe a broad category of features (e.g. highway, amenity), and values are more specific descriptions of each key (e.g. cycleway, bar). These are tags which contributors to Open Street Map have defined. A useful way to explore these is by using the comprehensive Open Street Map Wiki page on map features (https://wiki.openstreetmap.org/wiki/Map_Features). Here, it is fairly intuitive, because our key is 'public transport' and our value is 'station'. This is not _exactly_ what we want yet, because we are only interested in underground stations, but again, this highlights an interesting obstacle when accessing open data which could serve any number of research purposes. Note that we specify that we want the output to be an `sf` object, and that we want to trim the queried features by our study region `bb_sf`.
 
 ```{r}
-bikes_sf <- opq(bbox = bb_sf) %>%                                 # select bounding box
-  add_osm_feature(key = 'amenity', value = 'bicycle_parking') %>% # select features
-  osmdata_sf() %>%                                                # specify class
-  trim_osmdata(bb_poly = bb_sf)                                   # trim to region
+osm_stat_sf <- opq(bbox = bb_sf) %>%                               # select bounding box
+  add_osm_feature(key = 'public_transport', value = 'station') %>% # select features
+  osmdata_sf() %>%                                                 # specify class (sf or sp)
+  trim_osmdata(bb_poly = bb_sf)                                    # trim by bounding box 
 ```
 
-The resulting object `bikes_sf` contains lots of information. We can view the contents of the object by simply executing the object name into the Console.
+The resulting object `osm_stat_sf` contains lots of information. We can view the contents of the object by simply executing the object name into the **Console**.
 
 ```{r}
-bikes_sf
+osm_stat_sf
 ```
 
-This confirms details like the bounding box, but also provides information on the simple features collected from the query. As one might expect, most information relating to bicycle parking has been recorded using points (i.e. two-dimensional vertices, coordinates) of which we have over seven thousand at the time of writing. We also have around one hundred polygons. For now, let's extract the point information only and then transform the CRS to the BNG.
+This confirms details like the bounding box coordinates, but also provides information on the features collected from the query. As one might expect, most information relating to public transport station locations has been recorded using points (i.e. two-dimensional vertices, coordinates) of which we have over seven thousand at the time of writing. We also have around one hundred polygons. For now, let's extract the point information.
 
 ```{r}
-bikes_points_sf <- bikes_sf$osm_points 
+osm_stat_sf <- osm_stat_sf$osm_points 
 ```
 
-We can then plot these points over our original boundaries of Greater London. We reduce the default size of the point to ensure that we avoid too much overlap between bicycle parking locations.
+We could visualize these points using `ggplot2`, just as we did earlier, but are currently working with any form of public transport labeled as a 'station' by contributors to Open Street Map. Exploring the `osm_stat_sf` object will reveal a number of additional variables which we can use to narrow down our selection, such as the _network_ and _line_ on which the station is located. You will notice from running the below code, which opens up a frequency table for each combination of network and line, that we have the information required to do this.
+
+```{r, results = F, eval = F}
+osm_stat_sf %>%
+  as_tibble() %>% 
+  group_by(network, line) %>% 
+  tally() %>% 
+  View()
+```
+
+In fact, because all Northern line stations are labeled as London Underground, we only need to filter by the line.
+
+```{r}
+osm_north_sf <- osm_stat_sf %>% 
+  filter(line == "Northern")
+```
+
+Niw, we can then plot these points over the station locations pulled from the TfL API. We ignore the study region boundary to get a more detailed view.
 
 ```{r}
 ggplot() +
-  geom_sf(data = bb_sf) +
-  geom_sf(data = bikes_points_sf, size = 0.3)
+  geom_sf(data = tfl_north_sf) +
+  geom_sf(data = osm_north_sf, color = "red", alpha = 0.5) 
 ```
 
-As we can see, most bicycle parking spaces are clustered around the city centre, especially just north of the river Thames. It is also possible to make out key roads flowing in and out of the city centre, which contain bicycle parking all along the street.
-
-Using open police recorded crime data we can then plot actual incidences of bicycle theft to explore whether there is a spatial relationship between bike theft and parking spots in Greater London. For this example, we just use crime recorded as occurring in January 2020. First, let's load in the data as it downloaded raw from https://data.police.uk/data/.
+As we can see, there is clearly some discrepency between the two data sources. This gives us a preliminary answer to our second research question already: data relating to London Underground stations on Open Street Map appears to be incomplete. As such, the public sector open data from TfL appears to hold some advantage over its crowdsourced alternative. But what might the impact be on studying crime in and around London Underground stations? For that, we can load in our police recorded crime data which we downloaded directly from the web earlier.
 
 ```{r}
-crime.df <- read_csv("data/2020-01-metropolitan-street.csv")
+btp_df <- read_csv("data/2020-01-btp-street.csv")
 ```
 
-We then need to conduct a bit of preliminary data handling: filter crimes which were tagged as bicycle theft, convert the latitude and longitude columns to coordinates with _simple features_, state the WGS 84 CRS and then clip the points by our study region.
+In its raw form, this data is a standard data frame, but we can make it spatial using some of the functions we used earlier. Note that we need to add `st_intersection()` to clip our points to our study region, because the British Transport Police are operational across the country, not just in London. To do this, we first project `bb_sf` to the British National Grid, so that we perform the intersection on data which has the same projection.
 
 ```{r}
-bike.crime.sf <- crime.df %>% 
-  filter(`Crime type` == "Bicycle theft") %>% 
-  drop_na(Longitude, Latitude) %>% 
-  st_as_sf(coords = c(x = "Longitude", y = "Latitude"), crs = 4326) %>% 
+# First, project the study region boundaries.
+bb_sf <- st_transform(bb_sf, 27700)
+
+# Then, make the police data spatial, and clip.
+btp_sf <- btp_df %>%
+  drop_na(Longitude, Latitude) %>%
+  st_as_sf(coords = c(x = "Longitude", y = "Latitude"), crs = 4326) %>%
+  st_transform(27700) %>%
   st_intersection(bb_sf)
 ```
 
-To demonstrate the data in its entirety, we can plot the Greater London boundaries, overlayed with the bicycle parking space locations, and open crime data about bicycle thefts. It is worth clarifying that open police recorded crime data in England and Wales is spatially anonymised by a process of snapping points to a pre-defined grid (see @tompson2015uk). For that reason, many of these points overlap, and thus a degree of transparency is used for the points.
+We now have the location of all crimes recorded by the British Transport Police in Greater London during January, 2020. For the purposes of this demonstration, we can define crimes occurring as 'in and around' Northern line tube stations by creating a 50 metre buffer around each station, for each source of data, and counting the number of points falling within each. It is worth noting that this definition is somewhat arbitary, and is subject to a degree of spatial inaccuracy is open police recorded crime data [see tompson2015uk].
 
 ```{r}
-ggplot() +
-  geom_sf(data = bb_sf) +
-  geom_sf(data = bikes_points_sf, aes(colour = "bike_park"), size = 0.4, alpha = 0.5) +
-  geom_sf(data = bike.crime.sf, aes(colour = "bike_crime"), size = 0.3, alpha = 0.5) +
-  scale_colour_manual(name = NULL, values = c(bike_park = "black", bike_crime = "red")) +
-  theme(legend.position = "bottom")
+# Assign the same CRS.
+osm_north_sf <- st_transform(osm_north_sf, 27700)
+tfl_north_sf <- st_transform(tfl_north_sf, 27700)
+
+# Create buffers to define 'in and around'.
+osm_buff_sf <- st_buffer(osm_north_sf, dist = 50)
+tfl_buff_sf <- st_buffer(tfl_north_sf, dist = 50)
+
+# Count number of crimes recorded within each buffer.
+osm_north_sf <- osm_buff_sf %>% 
+  mutate(crimes = lengths(st_intersects(osm_buff_sf, btp_sf)))
+
+tfl_north_sf <- tfl_buff_sf %>% 
+  mutate(crimes = lengths(st_intersects(tfl_buff_sf, btp_sf)))
 ```
 
-### Bus stop example
+We can then visualise these counts and compare the two sources of data by colouring in our point locations according to the crime count. Note that we arrange the plots side-by-side using syntax available using the `patchwork` package.
 
 ```{r}
-bus_sf <- opq(bbox = bb_sf) %>%                                 # select bounding box
-  add_osm_feature(key = 'highway', value = 'bus_stop') %>%      # select features
-  osmdata_sf() %>%                                              # specify class
-  trim_osmdata(bb_poly = bb_sf)  
+p1 <- ggplot(data = osm_north_sf) +
+  geom_sf(mapping = aes(colour = crimes), size = 2) +
+  labs(title = "Open Street Map") +
+  scale_colour_viridis_c()
+  
+p2 <- ggplot(data = tfl_north_sf) +
+  geom_sf(mapping = aes(colour = crimes), size = 2) +
+  labs(title = "Transport for London") +
+  scale_colour_viridis_c()
+
+p1 + p2
 ```
 
 ## Future of open data

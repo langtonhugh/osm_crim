@@ -26,8 +26,11 @@ osm_stat_sf <- opq(bbox = bb_sf) %>%                               # select boun
 osm_stat_sf
 
 # Extract points only.
-osm_stat_sf <- osm_stat_sf$osm_points 
+temp <- osm_stat_sf$osm_polygons
+osm_stat_sf <- osm_stat_sf$osm_points
 
+  
+  
 # Check the network tags.
 table(osm_stat_sf$network)
 
