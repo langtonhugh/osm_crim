@@ -1,0 +1,3 @@
+- OSM is not a map, or a visual representation
+- it is a database of geospatial information
+- it is used to MAKE maps
