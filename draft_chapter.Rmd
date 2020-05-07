@@ -336,6 +336,10 @@ This chapter has sought to introduce open data as a novel, growing and invaluabl
 
 ## Future of open data
 
+As it stands, open data represents a key resource in crime and place research, but as the discussions and demonstrations in this chapter have shown, there is still a long way to go. Firstly, as with any emerging domain, open data sources vary considerably in their degree of completeness and reliability. Whilst this can offer insight, for instance, in terms of public participation and sense of community, it can also represents a significant obstacle to empirical analysis. A key challenge will be to ensure that students and researcher practitioners ask critical questions of their data before blindly delving into analysis and public dissemination. Secondly, the longevity of open data licences remains an unknown parameter. With so much open data being distributed by the public sector, the accessibility of open information is subject to shifts to changes in government, along with changes in the amount of resource available to safe-guard continuity. Thirdly, 
+
+Open data is a fundamental component in the ever-growing movement towards transparent and reproducible scientific research. 
+
 - Threats to its sustainability (e.g. licence expiry).
 - Prospects in crime of place research.
 - Examples of cool projects (e.g. Colouring London).
