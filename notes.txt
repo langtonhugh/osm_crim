@@ -1,10 +1,2 @@
-- benefits of open data. but also the issues!
-- some places are covered, others not
-- points/polygon selection - justify and explain,
-  maybe get centroid of polygons too.
-- SPPT test on the bike theft / bike parking data.
-- example set: something that works, something that doesn't.
-   - more/less deprived
-   - compare crowdsourced with TFL data
-- pick on a bus route etc. 400m buffer around
-  the bus stop, capture violent/sexual offences.
+- are we using a wrapper for TfL, or is it a direct query?
+- comment code more?
