@@ -17,9 +17,9 @@ library(osmdata)
 library(ggplot2)
 library(sf)
 library(readr)
-library(dplyr)
 library(tidyr)
 library(patchwork)
+library(dplyr)
 ```
 
 # Introduction
@@ -228,7 +228,7 @@ To keep things focused, let's request data about stop points on the Northern lin
 ```{r getapi}
 library(rjson)
 
-api_call <- fromJSON(readLines("https://api.tfl.gov.uk/line/northern/stoppoints"))
+api_call <- jsonlite::fromJSON(readLines("https://api.tfl.gov.uk/line/northern/stoppoints"))
 ```
 
 This gives us an object (`api_call`) which contains all the information returned by the TfL API. JSON is slightly different to traditional data frames with rows and columns, which we are probably more familiar with, because the data is nested. For instance, `api_call` is classed as a data frame, but just try  viewing the object using `View(api_call)`. 
@@ -459,7 +459,7 @@ osm_bike_sf <- osm_bike_sf$osm_points
 osm_bike_sf <- osm_bike_sf %>% 
   filter(brand == "Santander Cycles")
 
-tfl_bike_sf <- fromJSON(readLines("https://api.tfl.gov.uk/bikepoint"))
+tfl_bike_sf <- jsonlite::fromJSON(readLines("https://api.tfl.gov.uk/bikepoint"))
 
 tfl_bike_sf <- tfl_bike_sf %>%
   st_as_sf(coords = c(x = "lon", y = "lat"), crs = 4326) 
