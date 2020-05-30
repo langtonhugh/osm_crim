@@ -37,7 +37,7 @@ This chapter will outline how to develop such skills by providing a framework to
 
 ## What is open data?
 
-First, it is useful to clarify what we mean when we refer to 'open data'. The _Open Data Handbook_, compiled by the Open Knowledge Foundation, states that open data are "data that can be freely used, re-used and redistributed by anyone - subject only, at most, to the requirement to attribute and sharealike" [@dietrich2009open]. Specifically, open data can be defined along three key domains [@knowledge2016open].
+First, it is useful to clarify what we mean when we refer to 'open data'. The _Open Data Handbook_, compiled by the Open Knowledge Foundation, states that open data are "data that can be freely used, re-used and redistributed by anyone - subject only, at most, to the requirement to attribute and sharealike" [@dietrich2009open, para. 3]. Specifically, open data can be defined along three key domains [@knowledge2016open].
 
 - **Availability and Access:** the data must be accessible via a public domain, at no more than a reasonable reproduction cost, and through a convenient medium, such as the internet. Ideally, it should be machine-readable and modifiable. For example, it should be downloadable from a website as an unlocked spreadsheet, or JSON file, rather than presented as a summary table in a PDF document.
 - **Re-use and Redistribution:** the data must be provided under conditions that allow free use, such as modification, separation, or compilation of the data, and permit re-use and redistribution including the intermixing (merging) with other datasets.
