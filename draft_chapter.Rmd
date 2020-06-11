@@ -1,12 +1,12 @@
 ---
 title: "Open Data"
-author: "Samuel Langton (MMU) & Reka Solymosi (University of Manchester)"
 date: "June 2020"
+editor_options:
+  chunk_output_type: console
 output:
+  word_document: default
   pdf_document:
     latex_engine: xelatex
-editor_options: 
-  chunk_output_type: console
 bibliography: refs.bib
 ---
 
@@ -166,7 +166,7 @@ Note: If you didn't manage to follow along with the download instructions, you c
 
 
 ```{r crimeload_gh, eval = FALSE}
-btp_df <- read_csv("https://raw.githubusercontent.com/langtonhugh/osm_crim/master/data/
+btp_df <- read_csv("https://raw.githubusercontent.com/anonymous/osm_crim/master/data/
                    2019-01-greater-manchester-street.csv")
 ```
 
