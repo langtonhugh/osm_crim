@@ -248,7 +248,7 @@ ggplot(data = bb_sf) +
 ```
 
 
-If you are familiar with the shape of London then this image should be quite recognizable! We can now move on to scrape data from the Open Street Map API using the `opq()` function. The function name is short for 'Overpass query', which is how users can query the Open Street Map API using search criteria. 
+If you are familiar with the shape of London then this image should be quite recognizable! We can now move on to query data from the Open Street Map API using the `opq()` function. The function name is short for 'Overpass query', which is how users can query the Open Street Map API using search criteria. 
 
 Besides specifying what area we want to query with our bounding box object (`bb_sf`) in the `opq()` function, we must also define the feature which we want to pull from the API. Features in Open Street Map are defined through 'keys' and 'values'. Keys are used to describe a broad category of features (e.g. highway, amenity), and values are more specific descriptions (e.g. cycleway, bar). These are tags which contributors to Open Street Map have defined. A useful way to explore these is by using the comprehensive Open Street Map Wiki page on map features (https://wiki.openstreetmap.org/wiki/Map_Features). 
 
@@ -268,7 +268,7 @@ The resulting object `osm_stat_sf` contains lots of information. We can view the
 osm_stat_sf
 ```
 
-This confirms details like the bounding box coordinates, but also provides information on the features collected from the query. As one might expect, most information relating to public transport station locations has been recorded using points (i.e. two-dimensional vertices, coordinates) of which we have over seven thousand at the time of writing. We also have around one hundred polygons. For now, let's extract the point information.
+This confirms details like the bounding box coordinates, but also provides information on the features collected from the query. As one might expect, most information relating to public transport station locations has been recorded using points (i.e. two-dimensional vertices, coordinates) of which we have `r nrow(osm_stat_sf$osm_points)` at the time of writing. We also have around one hundred polygons. For now, let's extract the point information.
 
 ```{r stationpoints}
 osm_stat_sf <- osm_stat_sf$osm_points 
