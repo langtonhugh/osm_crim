@@ -4,9 +4,9 @@ date: "June 2020"
 editor_options:
   chunk_output_type: console
 output:
-  word_document: default
   pdf_document:
     latex_engine: xelatex
+  word_document: default
 bibliography: refs.bib
 ---
 
