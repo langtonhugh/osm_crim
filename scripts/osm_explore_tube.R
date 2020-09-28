@@ -7,6 +7,7 @@ library(dplyr)
 library(tidyr)
 library(purrr)
 library(patchwork)
+library(stringr)
 
 # OSM query ==============================================================================================
 
@@ -15,12 +16,13 @@ library(patchwork)
 # an area using the latitude and longitude coordinates, but it is generally
 # easier to use a search term. For instance
 
-bb_sf <- getbb(place_name = "greater london united kingdom", format_out = "sf_polygon") 
+# no longer works.
+# bb_sf <- getbb(place_name = "Greater London United Kingdom", format_out = "sf_polygon")
 
-osm_stat_sf <- opq(bbox = bb_sf) %>%                               # select bounding box
-  add_osm_feature(key = 'public_transport', value = 'station') %>% # select features
-  osmdata_sf() %>%                                                 # specify class (sf or sp)
-  trim_osmdata(bb_poly = bb_sf)                                    # trim by bounding box  
+osm_stat_sf <- opq(bbox = c(-0.5103751, 51.2867602, 0.3340155, 51.6918741)) %>% # select bounding box
+  add_osm_feature(key = 'public_transport', value = 'station') %>%           # select features
+  osmdata_sf()                                                               # specify class (sf or sp)
+  # trim_osmdata(bb_poly = bb_sf)                                           # trim by bounding box  
 
 # View contents.
 osm_stat_sf
@@ -29,37 +31,42 @@ osm_stat_sf
 temp <- osm_stat_sf$osm_polygons
 osm_stat_sf <- osm_stat_sf$osm_points
 
-  
-  
 # Check the network tags.
-table(osm_stat_sf$network)
+table(osm_stat_sf$line)
 
-# Filter Northern line only/
-osm_north_sf <- osm_stat_sf %>% 
-  filter(line == "Northern")
+# Filter jubern line only/
+osm_jub_sf <- osm_stat_sf %>% 
+  mutate(tube_line = line) %>% 
+  filter(str_detect(tube_line, "Jubilee"))
 
-osm_north_sf <- st_transform(osm_north_sf, 27700)
-bb_sf      <- st_transform(bb_sf, 27700)
+osm_jub_sf <- st_transform(osm_jub_sf, 27700)
+# bb_sf      <- st_transform(bb_sf, 27700)
 
 ggplot() +
-  geom_sf(data = bb_sf) +
-  geom_sf(data = osm_north_sf, size = 0.8)
+  geom_sf(data = osm_jub_sf, size = 0.8)
 
 # TfL scrape ==============================================================================================
 
-# Scape northern line locations from TfL. Warning is fine.
-api_call <- fromJSON(readLines("https://api.tfl.gov.uk/line/northern/stoppoints"))
+# Scape jubern line locations from TfL. Warning is fine.
+api_call <- fromJSON(readLines("https://api.tfl.gov.uk/line/jubilee/stoppoints"))
 
 # Extract bus stop names and the lat-long coordinates, transform to BNG.
-tfl_north_sf <- api_call %>% 
+tfl_jub_sf <- api_call %>% 
   select(commonName, lat, lon) %>% 
   st_as_sf(coords = c(x = "lon", y = "lat"), crs = 4326) %>% 
   st_transform(27700)
 
 # Plot difference.
 ggplot() +
-  geom_sf(data = osm_north_sf) +
-  geom_sf(data = tfl_north_sf, color = "red", alpha = 0.5) 
+  geom_sf(data = osm_jub_sf) +
+  geom_sf(data = tfl_jub_sf, color = "red", alpha = 0.5) 
+
+# Save before some nerd updates the line like the jubern line did.
+temp_osm_jub_sf <- osm_jub_sf %>% 
+  select(name, geometry)
+
+st_write(obj = temp_osm_jub_sf, dsn = "data/jubilee_osm.shp")
+st_write(obj = tfl_jub_sf, dsn = "data/jubilee_tfl.shp")
 
 # Assessing the impact in terms of crime. BTP data in January 2020.
 btp_df <- read_csv("data/2020-01-btp-street.csv")
@@ -68,29 +75,47 @@ btp_df <- read_csv("data/2020-01-btp-street.csv")
 btp_sf <- btp_df %>%
   drop_na(Longitude, Latitude) %>%
   st_as_sf(coords = c(x = "Longitude", y = "Latitude"), crs = 4326) %>%
-  st_transform(27700) %>%
-  st_intersection(bb_sf)
+  st_transform(27700)
+  # st_intersection(bb_sf)
 
 # Create buffers to define 'in and around'.
-osm_buff_sf <- st_buffer(osm_north_sf, dist = 50)
-tfl_buff_sf <- st_buffer(tfl_north_sf, dist = 50)
+osm_buff_sf <- st_buffer(osm_jub_sf, dist = 50)
+tfl_buff_sf <- st_buffer(tfl_jub_sf, dist = 50)
 
 # Aggregate to each station.
-osm_north_sf <- osm_buff_sf %>% 
+osm_jub_sf <- osm_buff_sf %>% 
   mutate(crimes = lengths(st_intersects(osm_buff_sf, btp_sf)))
 
-tfl_north_sf <- tfl_buff_sf %>% 
+tfl_jub_sf <- tfl_buff_sf %>% 
   mutate(crimes = lengths(st_intersects(tfl_buff_sf, btp_sf)))
 
 # Map out difference.
-p1 <- ggplot(data = osm_north_sf) +
+p1 <- ggplot(data = osm_jub_sf) +
   geom_sf(mapping = aes(colour = crimes), size = 3) +
   labs(title = "Open Street Map") +
-  scale_colour_viridis_c()
+  scale_colour_viridis_c(lim = c(0,42))
   
-p2 <- ggplot(data = tfl_north_sf) +
+p2 <- ggplot(data = tfl_jub_sf) +
   geom_sf(mapping = aes(colour = crimes), size = 3) +
   labs(title = "Transport for London") +
-  scale_colour_viridis_c()
+  scale_colour_viridis_c(lim = c(0,42))
 
-p1 + p2
+p1 / p2
+
+
+sum(osm_jub_sf$crimes) # 168
+sum(tfl_jub_sf$crimes) # 136
+
+# Check names
+tfl_jub_df <- tfl_jub_sf %>% 
+  mutate(name = str_remove(commonName, "Underground Station")) %>% 
+  as_tibble()
+
+osm_jub_df <- osm_jub_sf %>% 
+  as_tibble() %>% 
+  select(name)
+
+# Join to demo that names match perfectly.
+names_df <- left_join(tfl_jub_df, osm_jub_df, by = "name")
+
+
