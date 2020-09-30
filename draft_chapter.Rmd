@@ -1,6 +1,8 @@
 ---
-title: "Open Data"
-date: "June 2020"
+title: "Open Data for _Crime and Place_ Research: A Practical Guide in R."
+author:
+  - Samuel Langton\dag
+  - Reka Solymosi\ddag
 editor_options:
   chunk_output_type: console
 output:
@@ -8,10 +10,11 @@ output:
     latex_engine: xelatex
   word_document: default
 bibliography: refs.bib
+csl: apa.csl
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = T, message = F, warning = F)
+```{r setup, include = F, echo = F}
+knitr::opts_chunk$set(message = F, warning = F, eval = T, echo = T)
 # library(jsonlite)
 # library(osmdata)
 # library(ggplot2)
@@ -22,16 +25,69 @@ knitr::opts_chunk$set(echo = T, message = F, warning = F)
 # library(dplyr)
 ```
 
+
+\enspace
+
+This is an unedited draft, not for citation, of a book chapter that has been accepted for publication in E. Groff and C. Haberman (Eds.), The study of crime and place: A methods handbook (Temple University Press, 2021). Temple University Press retains all rights and subrights of this document. This pre-print is not published under a CC license.
+
+\enspace
+
+**Keywords:** crime, open data, Open Street Map, transport, geography.
+
+**Corresponding author:** Samuel Langton, Manchester Metropolitan University, Crime and Well-Being
+
+Big Data Centre, Geoffrey Manton Building, Manchester, M16 6EB, United Kingdom.
+
+Telephone: +44 (0)161 247 2000. Email: s.langton@mmu.ac.uk.
+
+\enspace
+
+\enspace
+
+\enspace
+
+\enspace
+
+\enspace
+
+\enspace
+
+\enspace
+
+\enspace
+
+\enspace
+
+\enspace
+
+\enspace
+
+\enspace
+
+\enspace
+
+\enspace
+
+\enspace
+
+\enspace
+
+
+***
+
+\dag Department of Sociology, Manchester Metropolitan University, Manchester, United Kingdom. ORCID: 0000-0002-1322-1553.
+
+\ddag School of Social Sciences, University of Manchester, Manchester, United Kingdom. ORCID: 0000-0001-8689-1526.
+
+\newpage
+
 # Introduction
 
 Access to data in crime and place research has traditionally been reserved for those who have the means to collect fresh data themselves, pay for access, or obtain data through formal data sharing agreements. Even when access is granted, the usage of these data often comes with conditions that circumscribe how the data can be used through licensing or policy [@kitchin2014data]. Even the public dissemination of findings which emerge from analysis might be subject to restrictions. This can lead to unequal access, controlled usage and curb the diffusion of findings, severely limiting the insight that can be obtained from data.
 
-Open data initiatives provide a response to these shortcomings, broadening access and participation in research, removing the requirement for permissions, formal agreements, and negotiations [@manovich2011trending]. Open data can lead to all sorts of novel insight within crime and place research, tapping into constructs and processes which are difficult to capture through surveys, interviews and other traditional measures [@solymosi2018role]. As such, it is important that social scientists, researchers, crime analysts, and others interested in making sense of the world around them have the skills and know-how to access, interpret, critique, and analyse open data sets.
+Open data initiatives provide a response to these shortcomings, broadening access and participation in research, removing the requirement for permissions, formal agreements, and negotiations [@manovich2011trending]. Open data can lead to all sorts of novel insight within crime and place research, tapping into constructs and processes which are difficult to capture through surveys, interviews and other traditional measures [@solymosi2018role]. As such, it is important that social scientists, researchers, crime analysts, and others interested in making sense of the world around them have the skills and know-how to access, interpret, critique, and analyse open datasets.
 
-This chapter will outline how to develop such skills by providing a framework to approach and meaningfully interpret open data. The chapter also offers a practical hands-on guide to demonstrate how to access, wrangle, and analyse different sources of open data in order to draw conclusions about crime and place. 
-
-
-<!-- We achieve this by first giving a background on open data, discussing the key types of data out there, critically assessing the strengths and limitations of each, and building a how-to guide checklist for researchers to follow when approaching an open data source. Finally, we work through an example that shows how to access, wrangle, link, and interpret open data from various sources, providing a template which can be applied in other research areas. -->
+This chapter will outline how to develop such skills by providing a framework to approach and meaningfully interpret open data. The chapter also offers a practical hands-on guide to demonstrate how to access, wrangle, and analyse different sources of open data in order to draw conclusions about crime and place.
 
 # Background
 
@@ -47,38 +103,31 @@ First, it is useful to clarify what we mean when we refer to 'open data'. The _O
 In short, 'open data' should be data that are readily and publicly available, in a usable format, and without restrictions on usage, modification and re-distribution. 
 
 
-Open data practices, and the extent to which it is a reality, vary both within and between countries. For example, the United States has a history of making public sector data sets openly available. The United Kingdom can be more strict, releasing data under a licence ('Open Government Licence'), with some data requiring a fee [@kitchin2014data]. The _Global Open Data Index_ [@globopendata] is one tool for tracking the annual global benchmark for publication of open government data by country. It provides a rank which indicates how well governments across the world follow open data practices across various domains. Many of these have direct relevance to crime and place research, such as administrative boundaries and geographic locations (e.g. coordinates).
+Open data practices, and the extent to which it is a reality, vary both within and between countries. For example, the United States has a history of making public sector datasets openly available. The United Kingdom can be more strict, releasing data under a licence ('Open Government Licence'), with some data requiring a fee [@kitchin2014data]. The _Global Open Data Index_ [@globopendata] is one tool for tracking the annual global benchmark for publication of open government data by country. It provides a rank which indicates how well governments across the world follow open data practices across various domains. Many of these have direct relevance to crime and place research, such as administrative boundaries and geographic locations (e.g. coordinates).
 
 
-The drive towards transparency and scrutiny of public information is further enhanced by an increasing need for replication - a hallmark for open science research practice. Opening up data sets used in criminology publications and wider social sciences fosters and facilitates a culture of replication [@pridemore2018replication]. As such, open data fits into the wider discourse around transparency, open review and open scrutiny, which (in time) may even become a policy requirement irrespective of the research field or the source of funding [@vuong2017open]. Increasingly, researchers are making use of online repositories for their papers (e.g. https://osf.io/), data (e.g. https://www.ukdataservice.ac.uk/deposit-data) and code (e.g. https://github.com/), all in the name of transparency and replication. These are guidelines and tools worth considering, not just when conducting analysis on secondary data sources, but also collecting and sharing your own data.
+The drive towards transparency and scrutiny of public information is further enhanced by an increasing need for replication - a hallmark for open science research practice. Opening up datasets used in criminology publications and wider social sciences fosters and facilitates a culture of replication [@pridemore2018replication]. As such, open data fits into the wider discourse around transparency, open review and open scrutiny, which (in time) may even become a policy requirement irrespective of the research field or the source of funding [@vuong2017open]. Increasingly, researchers are making use of online repositories for their papers (e.g. https://osf.io/), data (e.g. https://www.ukdataservice.ac.uk/deposit-data) and code (e.g. https://github.com/), all in the name of transparency and replication. These are guidelines and tools worth considering, not just when conducting analysis on secondary data sources, but also collecting and sharing your own data.
 
 ## What are types of open data?
 
-Now we have a reasonable idea about what open data is in a broad sense, we can consider the different types of open data which you might come across. Here, we formulate a typology of open data sets based on their origin.
+Now we have a reasonable idea about what open data is in a broad sense, we can consider the different types of open data which you might come across. Here, we formulate a typology of open datasets based on their origin.
 
 ### Public sector
 
-The 'public sector' refers to organizations owned and operated by local or central government with the core aim to provide services to the public. Much of the open data movement has focused on opening up information generated by these local and national state agencies [@kitchin2014data]. These can include national statistics or administrative data, but also data collected by publicly funded research projects such as victimization and household surveys, amongst others. The _Global Open Data Index_, introduced earlier, focuses on identifying the gaps in governmental organizations, encouraging them think about how public sector information can become more usable, and ultimately, more impactful [@globopendata].
+The 'public sector' refers to organizations owned and operated by local or central government with the core aim of providing services to the public. Much of the open data movement has focused on opening up information generated by these local and national state agencies [@kitchin2014data]. These can include national statistics or administrative data, but also data collected by publicly funded research projects such as victimization and household surveys, amongst others. The _Global Open Data Index_, introduced earlier, focuses on identifying the gaps in governmental organizations, encouraging them to think about how public sector information can become more usable, and ultimately, more impactful [@globopendata].
 
-Specific to crime and place research, data sets of interest in this particular domain might include
-<!-- As researchers studying crime and place, public sector data is particularly important. Many variables thought to explain the non-random distribution of crime, offenders and victims in space are collated and published by governmental bodies. For instance, demographic characteristics about resident populations can be collected via national censuses, with data usually released at aggregations which constitute 'neighborhoods' - a theoretically important scale in criminology.  -->
-data describing urban structure, such as street networks to assess whether the configuration of roads dictates things like violent crime victimisation [@streetsyntax2017], or victimisation surveys to quantify citizens' perceived safety and security. 
-
-
-<!-- In many countries, representative victimisation surveys are openly available for download. This is not only useful for substantive research (e.g. quantifying long-term crime trends), but also scrutiny over reliability and accuracy in other forms of open data, such as police recorded crime records. Both of these examples represent an interesting challenge to open data principles, since data tends to be anonymised to some degree before being made available to the public. Access to the raw records is dependent on a number of requirements (e.g. background checks, contractual agreements, ICT security measures) which might exclude many individuals due to cost and practicality. -->
-
-
+Specific to crime and place research, datasets of interest in this particular domain might include data describing urban structure, such as street networks, to assess whether the configuration of roads dictates things like violent crime victimization [@streetsyntax2017], or victimisation surveys to quantify citizens' perceived safety and security. 
 
 ### Private sector
 
 In contrast to the public sector, 'private sector' tends to refer to parts of the economy which are not under direct state control, and often operate for profit. Opening up data generated by the private sector represents a significant challenge, largely due to the proprietary value to its creators [@kitchin2014data]. The aims and objectives of private companies, who have a duty to shareholders and operate in a competitive market environment, differ considerably from local and central government. 
 
-That said, some datasets are released openly by private sector organizations, albeit often only a subset of what would be available as a paying customer. The website for ArcGIS, a piece of software maintained by the Environmental Systems Research Institute (ESRI), a private company, host a number of open geographic datasets on their online cloud platform (https://hub.arcgis.com/search). Indeed, many papers have made use of data collected or distributed by private organizations to explore crime and place, such as Google Street View images [@langton2017residential] and Twitter [@malleson2015impact]. In fact, you will learn to how to obtain free Twitter data for such purposes in this book (see Chapter 6, Topic 7).
+That said, some datasets are released openly by private sector organizations, albeit often only a subset of what would be available as a paying customer. The website for ArcGIS, a piece of software maintained by the Environmental Systems Research Institute (ESRI), a private company, host a number of open geographic datasets on their online cloud platform (https://hub.arcgis.com/search). Indeed, many papers have made use of data collected or distributed by private organizations to explore crime and place, such as Google Street View images [@langton2017residential] and Twitter [@malleson2015impact]. In fact, you will learn how to obtain free Twitter data for such purposes in this book (see Chapter 6, Topic 7).
 
 
 ### Open crowdsourced data
 
-Finally, there is a specific group of open data sources that collate data collectively, generated by large groups of individuals who do not specifically belong to any organization, but instead work together on a collaborative project. These are crowdsourced data sets. Examples include Wikipedia (https://www.wikipedia.org/), an online encyclopedia where anyone can contribute, or Flickr (https://www.flickr.com/) an online photo gallery where people can upload and tag their photos. Often, the organizations who maintain and monitor these data collection activities are charities or non-governmental organizations that do not operate for profit, but instead provide some form of social good. An example is the online reporting platform FixMyStreet (https://www.fixmystreet.com/), where people can report problems such as instances of graffiti, vandalism or environmental issues. This data has been used to explore signal crimes theory, for instance, offering insight into people's experiences with incivilities [@solymosi2018crowdsourcing]. Another topic in this book (see Chapter 6, Topic 6) discusses the merits and pitfalls of crowdsourced data, and what to watch out for when analysing open data of this type.
+Finally, there is a specific group of open data sources that collate data collectively, generated by large groups of individuals who do not specifically belong to any organization, but instead work together on a collaborative project. These are crowdsourced datasets. Examples include Wikipedia (https://www.wikipedia.org/), an online encyclopedia where anyone can contribute, or Flickr (https://www.flickr.com/) an online photo gallery where people can upload and tag their photos. Often, the organizations who maintain and monitor these data collection activities are charities or non-governmental organizations that do not operate for profit, but instead provide some form of social good. An example is the online reporting platform FixMyStreet (https://www.fixmystreet.com/), where people can report problems such as instances of graffiti, vandalism or environmental issues. This data has been used to explore signal crimes theory, for instance, offering insight into people's experiences with incivilities [@solymosi2018crowdsourcing]. Another topic in this book (see Chapter 6, Topic 6) discusses the merits and pitfalls of crowdsourced data, and what to watch out for when analyzing open data of this type.
   
 ## Strengths and limitations
 
@@ -95,9 +144,9 @@ Relatedly, researchers should be aware of issues over sampling, and ultimately, 
 
 ### What can be done?
 
-Open data can be messy, biased and noisey, but criminology (and social sciences more generally) can benefit immeasurably from its use. Only through open data can public sector bodies be held to account, research be transparent and reproducible, and participation in data analysis universal. In crime and place research, both dependent variables (e.g. police recorded crime incidents, victimization rates) and independent variables (e.g. demographic characteristics, ambient population estimates) can be sourced from open data, whether public, private or crowdsourced. 
+Open data can be messy, biased and noisey, but criminology (and social sciences more generally) can benefit immeasurably from its use. Only through open data can public sector bodies be held to account, research be transparent and reproducible, and participation in data analysis universal. In crime and place research, both dependent variables (e.g. police-recorded crime incidents, victimization rates) and independent variables (e.g. demographic characteristics, ambient population estimates) can be sourced from open data, whether public, private or crowdsourced. 
 
-So, what can we do to make sure we make good use of these data? With a critical, engaged and considered approach to conducting research with open data, criminology can become a leading force in open and reproducible social science. In sum, researchers and analysts using open data must first ask critical questions:
+So, what can we do to make sure we make good use of these data? With a critical, engaged and considered approach to conducting research with open data, criminology can become a leading force in open and reproducible social science. In sum, researchers and analysts using open data must ask critical questions:
 
 - **Where** does this data come from? 
 - **Why** was the data collected in the first place?
@@ -106,10 +155,10 @@ So, what can we do to make sure we make good use of these data? With a critical,
 - **When** did data collection take place, and how might have that influenced results?
 
 
-The answers to these questions will put the data sources in a context of understanding, and ensure that the researchers use them appropriately and with care. 
+The answers to these questions will put the data sources in context, and ensure that researchers use them appropriately and with due care. 
 
 
-With this in mind, we now move on to a practical exercise in which we will utilize multiple sources of open data to explore police recorded crime on and around public transport in London, England.
+With this in mind, we now move on to a practical exercise in which we will utilize multiple sources of open data to explore police-recorded crime on and around public transport in London, England.
 
 
 # Practical exercise
@@ -132,16 +181,16 @@ Here, we will consider the case of London. Specifically, we will examine the que
 
 ## Accessing data
 
-We will be using two different types of open data in this exercise: public sector data (police recorded crime data and local transport authority data) and crowdsourced data (from Open Street Map). To access them, we will use three different methods, namely, (1) direct download, (2) direct request to an API, 3) request to an API using a wrapper. This will give you a few different ideas about how you might go about accessing other open data sets relevant to your research. Locating, identifying and learning to access open data is a skill in itself.
+We will be using two different types of open data in this exercise: public sector data (police-recorded crime data and local transport authority data) and crowdsourced data (from Open Street Map). To access them, we will use three different methods, namely, (1) direct download, (2) direct request to an API, and (3) request to an API using a wrapper. This will give you a few different ideas about how you might go about accessing other open datasets relevant to your research. Locating, identifying and learning to access open data is a skill in itself.
 
 ### Direct download
 
-The simplest way that open data can be made available is through direct download from a website. In such a case, you can visit a website, select some parameters, and save a file containing the data you requested locally on your computer. 
+The simplest way that open data can be made available is through direct download from a website. In such a case, you can visit a website, select some parameters, and save a file containing the data you requested locally to your computer. 
 
 
-In the United Kingdom, police recorded crime data in England and Wales can be accessed this way using an online web portal (https://data.police.uk/) under Open Government Licence. Visiting this website, you will see a welcome message, and six tabs across the top which should read "Home", "Data", "API", "Changelog", "Contact", and "About". 
+In the United Kingdom, police-recorded crime data in England and Wales can be accessed this way using an online web portal (https://data.police.uk/) under Open Government Licence. Visiting this website, you will see a welcome message, and six tabs across the top which should read "Home", "Data", "API", "Changelog", "Contact", and "About". 
 
-Before we download any data, we can learn more about it by clicking on the "About" tab. This brings up information that is important to review carefully in order to answer the where, why, who, what and when questions posed earlier. Take a moment to read through this information, and take notes on what you think might be relevant for your analysis. For example, if we want to map crimes, we will want to explore if there is any type of "anonymization" that might take place before the data are released (to protect the privacy of the victims). If you read the "About" page, you might find the following note: 
+Before we download any data, we can learn more about it by clicking on the "About" tab. This brings up information that is important to review carefully in order to answer the where, why, who, what and when questions posed earlier. Take a moment to read through this information, and take notes on what you think might be relevant for your analysis. For example, if we want to map crimes, we will want to explore if there is any type of anonymization that might take place before the data are released (to protect the privacy of the victims). If you read the "About" page, you might find the following note: 
 
 > Location anonymization.
 The latitude and longitude locations of Crime and ASB incidents published on this site always represent the approximate location of a crime — not the exact place that it happened.
@@ -176,7 +225,7 @@ You should now have a data frame with `r nrow(btp_df)` crimes in, ready for you 
 
 ### Direct request to an API
 
-Another way of downloading open data is through an Application Programming Interface (API). This is a tool which defines an interface for a programme to interact with a software component. For example, it defines the sort of requests or calls which can be made, and how these calls and requests can be carried out. Here, we are using the term 'API' to denote tools created by an open data provider to give access to different subsets of their content. Such APIs facilitate scripted and programmatic extraction of content, as permitted by the API provider [@olmedilla2016harvesting]. APIs can take many different forms and be of varying quality and usefulness [@foster2016big]. For the purposes of accessing open data from the web, we are specifically talking about _RESTful_ APIs. The 'REST' stands for Representational State Transfer. These APIs work directly over the web, which means users can play with the API with relative ease in order to understand how it works [@foster2016big].
+Another way of downloading open data is through an Application Programming Interface (API). This is a tool which defines an interface for a programme to interact with a software component. For example, it defines the kind of requests or calls which can be made, and how these calls and requests can be carried out. Here, we are using the term 'API' to denote tools created by an open data provider to give access to different subsets of their content. Such APIs facilitate scripted and programmatic extraction of content, as permitted by the API provider [@olmedilla2016harvesting]. APIs can take many different forms and be of varying quality and usefulness [@foster2016big]. For the purposes of accessing open data from the web, we are specifically talking about _RESTful_ APIs. The 'REST' stands for Representational State Transfer. These APIs work directly over the web, which means users can play with the API with relative ease in order to understand how it works [@foster2016big].
 
 
 Here, we will make a direct request to the API created by London's local government organization responsible for transport: Transport for London (TfL). TfL oversee the London Underground. They provide access to their open data through a unified API. Much like how we found the "About" page when downloading police data directly, to answer our 'Where', 'Why', 'Who', 'What' and 'When' questions, we must find a similar document for TfL. Details about the TfL API are provided through their open data page (https://tfl.gov.uk/info-for/open-data-users/unified-api), which explains what data is available, and how the API is designed. 
@@ -194,11 +243,11 @@ knitr::include_graphics("img/tfl_screenshot.png")
 Although this contains the information we requested, it is not very legible for our human eyes. It is in a format called _JSON_. This stands for JavaScript Object Notation. JSON is an open standard way of storing and exchanging data, and will most likely be the format in which data are returned from most API calls. As you can see, it is not intuitive to read in its current format _but_ it is machine-readable friendly, which again aligns well with our requirements for open data. 
 
 
-In reality, you won't usually make these calls by pasting them into a web browser, but it is useful to see how it works. More likely, we will actually make these calls from within the R environment. That said, it might be useful (and interesting) to examine how basic queries are constructed using this documentation. For example, we now know that to request the stops from the "Bakerloo" line, we need the URL: 
+In reality, you will not usually make these calls by pasting them into a web browser, but it is useful to see how it works. More likely, we will actually make these calls from within the R environment. That said, it might be useful (and interesting) to examine how basic queries are constructed using this documentation. For example, we now know that to request the stops from the "Bakerloo" line, we need the URL: 
 
 `"https://api.tfl.gov.uk/line/bakerloo/stoppoints"`
 
-Let's say that instead, we want data for the Northern Line. What do you think that URL will look like? Indeed, all you need to do is replace "bakerloo" with "northern".
+Let's say that instead, we want data for the Jubilee Line. What do you think that URL will look like? Indeed, all you need to do is replace "bakerloo" with "jubilee".
 
 In R, we can use the `fromJSON()` function from the `jsonlite` package to parse all this information into a data frame (with rows and columns). It will then become more familiar and usable. All we need to do is input the URL from the TfL API into the function with a bit of help from `readLines()`, a function in base R for reading text from URLs.
 
@@ -210,26 +259,24 @@ library(jsonlite)
 api_call <- fromJSON(readLines("https://api.tfl.gov.uk/line/jubilee/stoppoints"))
 ```
 
-This gives us an object (`api_call`) which contains all the information returned by the TfL API. JSON is slightly different to traditional data frames with rows and columns, which we are probably more familiar with, because the data is nested. For instance, `api_call` is classed as a data frame, but now try viewing the object using `View(api_call)`. You will notice that some of the columns are actually lists, rather than character or factor vectors, which is what we might usually expect. Another way of exploring the `api_call` object is by looping the `class()` function through all the columns in the data frame using `lapply(api_call, class)`. 
-
-This demonstrates an important challenge faced by researchers when using open data, because dealing with data in this format can be messy and complicated. It is not always a neatly formatted data frame like the CSV file from the open police data portal. That said, we can transform this data into something more familiar from within R, as we will see later on.
+This gives us an object (`api_call`) which contains all the information returned by the TfL API. JSON is slightly different to traditional data frames with rows and columns, which we are probably more familiar with, because the data is nested. For instance, `api_call` is classed as a data frame, but now try viewing the object using `View(api_call)`. You will notice that some of the columns are actually lists, rather than character or factor vectors, which is what we might usually expect. This demonstrates an important challenge faced by researchers when using open data, because dealing with data in this format can be messy and complicated. It is not always a neatly formatted data frame like the CSV file from the open police data portal. That said, we can transform this data into something more familiar from within R, as we will see later on.
 
 
 ### Request to an API using a wrapper
 
-Finally, we will look at how open data can be obtained using API wrappers. Often, developers who work with APIs will share their code, and release them in the form of a package or module, so that other people can use it. This is called a _wrapper_ because it uses code that 'wraps' around the API to make it a neater, more usable package. Wrappers remove (or at least lower) many of the obstacles to accessing open data noted earlier. The wrapper can take many forms, such as a Python module, or an R package. It could even be a web interface that provides a graphical user interface (GUI) for accessing the API in question. 
+Finally, we will look at how open data can be obtained using API wrappers. Often, developers who work with APIs will share their code, and release them in the form of a package or module, so that other people can use it. This is called a _wrapper_ because it uses code that 'wraps' around the API to make it a neater, more usable package. Wrappers remove (or at least lower) many of the obstacles to accessing open data noted earlier. The wrapper can take many forms, such as a Python module or an R package. It could even be a web interface that provides a graphical user interface (GUI) for accessing the API in question. 
 
 
 To demonstrate this, we will be accessing data from Open Street Map, a database of geospatial information built by a community of mappers, enthusiasts and members of the public, who contribute and maintain data about all sorts of environmental features, such as roads, green spaces, restaurants and railway stations, amongst many other things, all over the world. As such, it is a prime example of 'crowdsourced' open data. You can view the information contributed to Open Street Map using their online mapping platform (https://www.openstreetmap.org/). The result of people's contributions is a database of spatial information rich in local knowledge which provides invaluable information about places and their features, without being subject to strict terms on usage. 
 
 
-Open Street Map has two types of wrappers available for its API, a web-based GUI called Overpass Turbo (https://overpass-turbo.eu/), and an R package called `osmdata`. 
+Open Street Map has two main types of wrappers available for its API, a web-based GUI called Overpass Turbo (https://overpass-turbo.eu/), and an R package called `osmdata`. 
 
 If we load the package `osmdata` we can use its functions to query the Open Street Map API, rather than the API query being made directly (like we did for TfL, using the URL). Once again, we will want to identify documentation which can help us understand and critique our data, and learn how to query it. When it comes to Open Street Map, you can read all about it on their community page: [https://www.openstreetmap.org/about](https://www.openstreetmap.org/about). Using the wrapper in R, we can refer to the package documentation and the associated vignette online: [https://cran.r-project.org/web/packages/osmdata/vignettes/osmdata.html](https://cran.r-project.org/web/packages/osmdata/vignettes/osmdata.html). 
 
-Unlike the TfL API, `osmdata` is an international database, and has lots of data that we might not necessarily need. As such, the first thing we need to specify is our study region. To do this, need to specify a bounding box. You can think of the bounding box as a box drawn around the area that we are interested in (in this case, London, England) which tells the Open Street Map API that we want everything *inside* the box, but nothing *outside* the box. 
+Unlike the TfL API, `osmdata` is an international database, and has lots of data that we might not necessarily need. As such, the first thing we need to specify is our study region. To do this, we need to specify a bounding box. You can think of the bounding box as a box drawn around the area that we are interested in (in this case, London, England) which tells the Open Street Map API that we want everything *inside* the box, but nothing *outside* the box. 
 
-So, how can we name a bounding box specification to define the study region? One way to do this is through a search term. Here, we want to select Greater London, so we can use the search term "greater london united kingdom". Besides specifying the study region, we can also tell the `getbb()` function what format we want the data to be in. In this case we want a spatial object, specifically an `sf` polygon object (from the `sf` package) which we name `bb_sf`.
+So, how can we name a bounding box specification to define the study region? One way to do this is through a search term. Here, we want to select Greater London, so we can use the search term "greater london united kingdom" within the `getbb()` function. Using this function we can also specify what format we want the data to be in. In this case, we want a spatial object, specifically an `sf` polygon object (from the `sf` package), which we name `bb_sf`.
 
 ```{r bb, message=F, warning=F}
 library(osmdata)
@@ -238,7 +285,7 @@ library(sf)
 bb_sf <- getbb(place_name = "greater london united kingdom", format_out = "sf_polygon")
 ```
 
-One downside of using search terms to define the bounding box, as with any search term, is that inconsistencies in terminology, wordings and spelling might lead to unexpected outputs (or none at all). Another way to obtain the bounding box is to manually specify the latitude and longitude coordinates. This requires a bit of pre-existing knowledge or research about your study region. A quick internet search, or exploration of the interactive OSM online map (https://www.openstreetmap.org/), will give you an idea of the coordinates for your study region. For Greater London, we can specify our bounding box as follows, saving the coordinates to the object `bb_gl` for later use.
+One downside of using search terms to define the bounding box, as with any search term, is that inconsistencies in terminology, wordings and spelling might lead to unexpected outputs (or none at all). Another way to obtain the bounding box is to manually specify the latitude and longitude coordinates. This requires a bit of pre-existing knowledge about your study region. A quick internet search, or exploration of the interactive Open Street Map platform (https://www.openstreetmap.org/), will give you an idea of the coordinates for your study region. For Greater London, we can specify our bounding box as follows, saving the coordinates to the object `bb_gl` for later use.
 
 ```{r bbmanual}
 bb_gl <- c(-0.51037, 51.28676, 0.33401, 51.69187) # xmin, ymin, xmax, ymax
@@ -248,7 +295,7 @@ We can now move on to query data from the Open Street Map API using the `opq()` 
 
 Besides specifying what area we want to query with our bounding box object(s) in the `opq()` function, we must also define the feature which we want to pull from the API. Features in Open Street Map are defined through 'keys' and 'values'. Keys are used to describe a broad category of features (e.g. highway, amenity), and values are more specific descriptions (e.g. cycleway, bar). These are tags which contributors to Open Street Map have defined. A useful way to explore these is by using the comprehensive Open Street Map Wiki page on map features (https://wiki.openstreetmap.org/wiki/Map_Features). 
 
-We can select what features we want using the `add_osm_feature()` function, specifying our key as 'public transport' and our value as 'station'. We also want to specify what sort of object (what class) to get our data into, and as we're still working with spatial data, we stick to the `sf` format, for which the function is `osmdata_sf()`. Here, we specify our bounding box as the manual coordinates contained in `bb_gl`. ^[If you use the bounding box obtained through `getbb()` one can subsequently trim down the outputs from `add_osm_feature()` using `trim_osmdata()`. For instance, we could add `trim_osmdata(bb_poly = bb_sf)` to our initial query.]
+We can select what features we want using the `add_osm_feature()` function, specifying our key as 'public transport' and our value as 'station'. We also want to specify what sort of object (what class) to get our data into, and as we are still working with spatial data, we stick to the `sf` format, for which the function is `osmdata_sf()`. Here, we specify our bounding box as the manual coordinates contained in `bb_gl`. ^[If you use the bounding box obtained through `getbb()` one can subsequently trim down the outputs from `add_osm_feature()` using `trim_osmdata()`. For instance, we could add `trim_osmdata(bb_poly = bb_sf)` to our initial query.]
 
 ```{r opq}
 osm_stat_sf <- opq(bbox = bb_gl) %>%                               # select bounding box
@@ -268,15 +315,15 @@ This confirms details like the bounding box coordinates, but also provides infor
 osm_stat_sf <- osm_stat_sf$osm_points 
 ```
 
-We now have an `sf` object with all the public transport stations in our study region mapped by Open Street Map volunteers, along with  ~130 variables of auxiliary data, such as the "fare_zone" the station is in, what "amenity" it may have and whether it has "toilets", amongst many others. Of course, it is up to the volunteers whether they collect all these data, and in many cases, they have not added information. Nevertheless, when the details are recorded, they provide rich insight and local knowledge that we may otherwise be unable to obtain.
+We now have an `sf` object with all the public transport stations in our study region mapped by Open Street Map volunteers, along with  ~130 variables of auxiliary data, such as the `fare_zone` the station is in, what `amenity` it may have and whether it has `toilets`, amongst many others. Of course, it is up to the volunteers whether they collect all these data, and in many cases, they have not added information. Nevertheless, when the details are recorded, they provide rich insight and local knowledge that we may otherwise be unable to obtain.
 
-One additional step needed is to select the stations which are relevant to us (i.e. they fall along the Jubilee Line). The variable `line` can help us with this. First, let's look at the values in this variable by using the `table()` function: 
+One additional step needed is to select the stations which are relevant to us (i.e. they fall along the Jubilee Line). The variable `line` can help us with this. First, let's explore this variable by using the `table()` function.
 
 ```{r valuesofline, eval = F}
 table(osm_stat_sf$line)
 ```
 
-You will see that "Jubilee" appears several times under different line names. The main category ("Jubilee") is the most common, but many other combinations exist (e.g. Central;Jubilee) for stations which sit on multiple lines. To get round this, and select all stations with "Jubilee" somewhere in the name, we can use the `grepl()` function from base R. Note that we also make use of `filter()` from within `dplyr`, so we first need to load that package.
+You will see that "Jubilee" appears several times under different line names. The main category ("Jubilee") is the most common, but many other combinations exist (e.g. "Central;Jubilee") for stations which sit on multiple lines. To get round this, and select all stations with "Jubilee" somewhere in the name, we can use the `grepl()` function from base R. Note that we also make use of `filter()` from within `dplyr`, so we first need to load that package.
 
 ```{r filterline}
 library(dplyr)
@@ -285,11 +332,11 @@ osm_jub_sf <- osm_stat_sf %>%
   filter(grepl("Jubilee", line))
 ```
 
-Now we have all our open data sets loaded into the R environment!
+This gives us Open Street Map data on all 27 stations on the Jubilee underground line. Now we have all our open datasets loaded into the R environment!
 
 ## Cleaning, wrangling, and visualising our data
 
-Obtaining open data from a direct download or API is often only half the battle. It doesn't necessarily mean that the data is in the shape needed to conduct analysis. The first thing to do once we have acquired open data is investigate it using data cleaning, wrangling, and visualisation. 
+Obtaining open data from a direct download or API is often only half the battle. It doesn't necessarily mean that the data is in the shape needed to conduct analysis. The first thing to do once we have acquired open data is investigate it using data cleaning, wrangling, and visualization. 
 We've already loaded the `osmdata` and `dplyr` packages, but here, we will also make use of `ggplot2`, `sf`, `tidyr` and `patchwork`, so load these now. Remember, if you do not have these packages installed, use the `install.packages()` function prior to loading each one with `library()`.
 
 
@@ -322,9 +369,18 @@ ggplot(tfl_jub_sf) +
 
 There we have it: with just a few lines of code in R, we have queried the TfL API, a public sector source of open data, and plotted a basic map of stations on the Jubilee underground line.
 
-### Visualise to check and compare our data sets
+```{r savedata, echo = F, message = F, warning = F, results = F, eval = F}
+# Select important columns only, as there are non-unique field names which stops save.
+temp_osm_jub_sf <- osm_jub_sf %>% 
+  select(name, geometry)
 
-We can now plot the Open Street Map station points, which are already spatial, over these station locations pulled from the TfL API, to see how the two data sets compare.
+st_write(obj = temp_osm_jub_sf, dsn = "data/jubilee_osm.shp")
+st_write(obj = tfl_jub_sf, dsn = "data/jubilee_tfl.shp")
+```
+
+### Visualise to check and compare our datasets
+
+We can now plot the Open Street Map station points, which are already spatial, over these station locations pulled from the TfL API, to see how the two datasets compare.
 
 ```{r mapline}
 ggplot() +
@@ -332,11 +388,9 @@ ggplot() +
   geom_sf(data = osm_jub_sf, color = "red", alpha = 0.5) 
 ```
 
-As we can see, the two data sources appear to be largely comparable in terms of their spatial patterning. However, the exact location of stations differs between OSM and TfL. Determining a single location for underground stations is not straightforward, especially for larger stations which have multiple entrances, platforms, and walkway tunnels. For operational purposes, TfL might have a specific definition for the location of a station, such as its centroid, which has been systematically applied to the dataset. The data pulled from OSM might have been compiled by a volunteer contributor with their own perception of how to define the location of a station, such as the ticket booth or the main entrance. This definition _might_ be more theoretically meaningful than that used by TfL, since it might reflect the public's perception of the station's built environment, and thus opportunities for crime. However, it is also plausible that the locations from OSM have been collated by multiple different contributors, each with their own idea of where each station lies on the line. This demonstrates why critically engaging with open data sources is so crucial, but also challenging, because it might generate lots of new questions which need to be explored.
+As we can see, the two data sources appear to be broadly comparable in terms of their spatial patterning. However, the exact location of stations differs between Open Street Map and TfL. Determining a single pinpoint location for underground stations is not straightforward, especially for larger stations which have multiple entrances, platforms, and walkway tunnels. For operational purposes, TfL might have a specific definition for the location of a station, such as its centroid, which has been systematically applied to create the coordinates. The data pulled from Open Street Map might have been compiled by a volunteer contributor with their own perception of how to define the location of a station, such as the ticket booth or the main entrance. This definition _might_ be more theoretically meaningful than that used by TfL, since it could reflect a realistic 'on the ground' perception of the station's built environment, and thus opportunities for crime. On the other hand, if the locations from Open Street Map were collated by multiple different contributors, each with their own idea of where each station lies on the line, we might conclude that the measure is unreliable. These kinds of questions demonstrate why critically engaging with open data sources is so crucial, but also challenging.
 
-Given the differences observed between the two open data sources, what might the impact be when studying crime in and around London Underground stations? For that, we can turn to our British Transport Police data. 
-
-In its raw form, this data is a standard data frame, but we can make it spatial using some of the functions from the `sf` package that we used earlier.
+Given the differences observed between the two open data sources, what might the impact be when studying crime in and around London Underground stations? For that, we can turn to our British Transport Police data. In its raw form, this data is a standard data frame, but we can make it spatial using some of the functions from the `sf` package that we used earlier.
 
 ```{r crimespatial, echo=F}
 btp_sf <- btp_df %>%
@@ -345,10 +399,10 @@ btp_sf <- btp_df %>%
   st_transform(27700)
 ```
 
-We now have the recorded location of all crimes recorded by the British Transport Police during January, 2020. For the purposes of this demonstration, we can define crimes occurring as 'in and around' Jubilee line tube stations by creating a 50 meter buffer around each station, for each source of data, and counting the number of points falling within each. It is worth noting that this definition is somewhat arbitrary, and is subject to the spatial inaccuracy in open police recorded crime data [see @tompson2015uk], but it does serve to facilitate this demonstration.
+We now have the recorded location of all crimes recorded by the British Transport Police during January, 2020. For the purposes of this demonstration, we can define crimes occurring as 'in and around' Jubilee line tube stations by creating a 50 meter buffer around each station, for each source of data, and counting the number of points falling within each. It is worth noting that this definition is somewhat arbitrary, and is subject to the spatial inaccuracy in open police-recorded crime data [see @tompson2015uk], but it does serve to facilitate this demonstration.
 
 ```{r buffer}
-# Ensure the same CRS (BNG, 27700).
+# Ensure each has the same CRS (BNG, 27700).
 osm_jub_sf <- st_transform(osm_jub_sf, st_crs(tfl_jub_sf))
 
 # Create buffers to define 'in and around'.
@@ -364,8 +418,23 @@ tfl_jub_sf <- tfl_buff_sf %>%
 
 We can then visualize these counts and compare the two sources of data by coloring in our point locations according to the crime count. Note that we arrange the plots using syntax available using the `patchwork` package, and set the scales to be comparable using the `lim` argument within `scale_color_viridis_c()`.
 
+```{r crimemapcomparesave, echo = F}
+p1 <- ggplot(data = osm_jub_sf) +
+  geom_sf(mapping = aes(color = crimes), size = 2) +
+  labs(title = "Open Street Map") +
+  scale_color_viridis_c(lim = c(0,42))
+  
+p2 <- ggplot(data = tfl_jub_sf) +
+  geom_sf(mapping = aes(color = crimes), size = 2) +
+  labs(title = "Transport for London") +
+  scale_color_viridis_c(lim = c(0,42))
 
-```{r crimemapcompare}
+p12 <- p1 / p2
+
+ggsave(filename = "img/maps.png", height = 16, width = 24, unit = "cm")
+```
+
+```{r crimemapcompare, eval = F}
 p1 <- ggplot(data = osm_jub_sf) +
   geom_sf(mapping = aes(color = crimes), size = 2) +
   labs(title = "Open Street Map") +
@@ -379,42 +448,19 @@ p2 <- ggplot(data = tfl_jub_sf) +
 p1 / p2
 ```
 
-A number of factors emerge from this visualization. First, issues arising from the disparity between the stations identified on the Northern line are compounded. Using the Open Street Map data in isolation, we are grossly underestimating the number of crimes occurring in and around Northern line stations. This could have significant implications for how police allocate resource across the underground network. Secondly, as a result of this, the spatial patterning of crime on underground stations differs considerably between the two data sources. Using the Open Street Map data, the final station on the line, Morden, has the greatest concentration of crimes, whereas the TfL data suggests that the most problematic station is Tottenham Court Road, in the city centre. The conclusions drawn are starkly different, and would determine the consistency of findings with existing research examining crime at underground stations [@ceccato2013security].
-
-## Alternative example 
-
-That said, this is not to say that Open Street Map is an inadequate source of open data for crime and place research. Firstly, it is an ever-growing resource. It is plausible (indeed, likely) that in the near future, the missing information about London Underground lines will be completed. Secondly, as noted, systematic variation in the extent to which individuals have contributed to the database can generate interesting discussions and avenues of research in its own right. Thirdly, this is simply one of thousands of features contained in the Open Street Map database, many of which are more complete. If we were interested in examining concentrations of bicycle theft from bike rental docking stations (so-called "Boris bikes") in Greater London, we could query the APIs from TfL and Open Street Map, just as we did earlier, but using slightly amended criteria. This is demonstrated below, all in one code chunk.
-
-```{r bikexample, eval = F}
-bb_sf <- getbb(place_name = "greater london", format_out = "sf_polygon") 
-
-osm_bike_sf <- opq(bbox = bb_sf) %>%                                 
-  add_osm_feature(key = 'amenity', value = 'bicycle_rental') %>%     
-  osmdata_sf() %>%                                                  
-  trim_osmdata(bb_poly = bb_sf)                                
-
-osm_bike_sf <- osm_bike_sf$osm_points
-
-osm_bike_sf <- osm_bike_sf %>% 
-  filter(brand == "Santander Cycles")
-
-tfl_bike_sf <- fromJSON(readLines("https://api.tfl.gov.uk/bikepoint"))
-
-tfl_bike_sf <- tfl_bike_sf %>%
-  st_as_sf(coords = c(x = "lon", y = "lat"), crs = 4326) 
-
-ggplot() + 
-  geom_sf(data = osm_bike_sf) +
-  geom_sf(data = tfl_bike_sf, col = "red", alpha = 0.4)
+```{r mapfig, out.width = "\\textwidth", echo = F}
+knitr::include_graphics("img/maps.png")
 ```
 
-As showcased, the resulting visualizations are highly similar (a Spatial Point Pattern Test will confirm this, see Chapter 8, Topic 4). Refer back to the example earlier if some of the code is unclear. Note that this is a major benefit of using an API wrapper from within R, because the code used to query each feature can easily be re-used, with minor amendments, to extract different information.
+A number of factors emerge from this investigation. First, there is a disparity between the total number of crimes captured by the buffers in each dataset. Using the Open Street Map data, a total of `r sum(osm_jub_sf$crimes)` crimes were recorded across all stations on the line. Using the TfL data, only `r sum(tfl_jub_sf$crimes)` were recorded. Thus, the volume of crime observed in and around Jubilee stations during January will differ depending on the open data source being used. This could have important implications for how community and policing resources are distributed between underground lines. Second, the spatial patterning of crime hotspots on the line differs considerably between the two data sources. Using the Open Street Map data, the final station on the line, Stratford, has the greatest concentration of crimes, whereas the TfL data suggests that the most problematic station is Green Park, in the city centre. Despite the minor differences in the locations of each station, the conclusions drawn are starkly different, and would determine the consistency of findings with existing research examining crime at underground stations [@ceccato2013security].
+
+In this example, there is no obvious 'right or wrong' answer to determine which open data source is most appropriate. Engaging with the creators of the data would be an important step in answering the critical questions ('Where', 'Why', 'Who', 'What' and 'When') posed at the beginning of this chapter. For TfL, this might mean investigating the criteria used by their analysts to define the coordinates for stations. For Open Street Map, its online transparency means that we could find out which user(s) recorded the Jubilee station locations, and directly contact this community of volunteers to find out how station locations were recorded and why. Based on this information, an informed decision could be made on which data source is most appropriate, given the research question and theoretical framework being used.
 
 # Discussion
 
 ## Summary
 
-This chapter has sought to introduce open data as a novel, growing and invaluable tool in crime and place research through a review of key fundamentals and a substantive demonstration within R. We have defined open data, and outlined some key types of open information available, along with their respective strengths and weaknesses. An important component of this review has been to encourage an engaged and critical research approach to using open data. Open data is both a rich resource of dependent and independent variables for researching the geography of crime, and an interesting research topic in and of itself as a tool for providing insight overlooked by traditional data sources. By way of an example, we accessed different sources of open data in order to explore crime concentrations at London Underground stations: police recorded crime data via a direct download from a public sector website, transport data via directly querying a public sector API, hosted by Transport for London, and the equivalent transport data retrieved from a crowdsourced database, Open Street Map, using an API wrapper. We found key differences between the two sources of transport data. Specifically, missing information in Open Street Map resulted in a skewed picture of crime occurring in and around underground stations. This highlighted both the power of open data, but also its shortcomings. We concluded with an additional demonstration using bike rental docking stations in Greater London, which showcased a scenario in which both public sector and crowdsourced open data provide unique (and comparable) insight.
+This chapter has sought to introduce open data as a novel, growing and invaluable tool in crime and place research through a review of key fundamentals and a substantive demonstration within R. We have defined open data, and outlined some key types of open information available, along with their respective strengths and weaknesses. An important component of this review has been to encourage an engaged and critical research approach to using open data. Open data is both a rich resource of dependent and independent variables for researching the geography of crime, and an interesting research topic in and of itself as a tool for providing insight overlooked by traditional data sources. By way of an example, we accessed different sources of open data in order to explore crime concentrations at London Underground stations on the Jubilee line: police-recorded crime data via a direct download from a public sector website, transport data via directly querying a public sector API, hosted by Transport for London, and the equivalent transport data retrieved from a crowdsourced database, Open Street Map, using an API wrapper. Minor discrepancies in the geographic location of underground stations in each open data source painted two starkly different stories about the volume and concentration of crime occurring on the line. The demonstration highlighted both the power of open data, but the need to critically engage with sources.
 
 ## Future of open data
 

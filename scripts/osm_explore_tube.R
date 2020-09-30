@@ -19,7 +19,10 @@ library(stringr)
 # no longer works.
 # bb_sf <- getbb(place_name = "Greater London United Kingdom", format_out = "sf_polygon")
 
-osm_stat_sf <- opq(bbox = c(-0.5103751, 51.2867602, 0.3340155, 51.6918741)) %>% # select bounding box
+
+bb_gl <- c(-0.51037, 51.28676, 0.33401, 51.69187)
+
+osm_stat_sf <- opq(bbox = bb_gl) %>% # select bounding box
   add_osm_feature(key = 'public_transport', value = 'station') %>%           # select features
   osmdata_sf()                                                               # specify class (sf or sp)
   # trim_osmdata(bb_poly = bb_sf)                                           # trim by bounding box  
