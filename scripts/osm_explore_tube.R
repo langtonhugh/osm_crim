@@ -64,12 +64,12 @@ ggplot() +
   geom_sf(data = osm_jub_sf) +
   geom_sf(data = tfl_jub_sf, color = "red", alpha = 0.5) 
 
-# Save before some nerd updates the line like the jubern line did.
-temp_osm_jub_sf <- osm_jub_sf %>% 
-  select(name, geometry)
-
-st_write(obj = temp_osm_jub_sf, dsn = "data/jubilee_osm.shp")
-st_write(obj = tfl_jub_sf, dsn = "data/jubilee_tfl.shp")
+# Save before someone changes the lines.
+# temp_osm_jub_sf <- osm_jub_sf %>% 
+#   select(name, geometry)
+# 
+# st_write(obj = temp_osm_jub_sf, dsn = "data/jubilee_osm.shp")
+# st_write(obj = tfl_jub_sf, dsn = "data/jubilee_tfl.shp")
 
 # Assessing the impact in terms of crime. BTP data in January 2020.
 btp_df <- read_csv("data/2020-01-btp-street.csv")
@@ -109,16 +109,90 @@ p1 / p2
 sum(osm_jub_sf$crimes) # 168
 sum(tfl_jub_sf$crimes) # 136
 
+# Which is the crime hotspot at the end of the line?
+osm_jub_sf %>% 
+  arrange(desc(crimes)) %>% 
+  slice(1) %>% 
+  pull(name) 
+# Straford.
+
+# let's plot a comparison map of this station location. We can get building footprints.
+stratford_osm_sf <- osm_jub_sf %>% 
+  arrange(desc(crimes)) %>% 
+  slice(1)
+
+stratford_osm_sf <- osm_jub_sf %>% 
+  filter(name == "Stratford")
+
+# Get the TFL Stratford buffer (no crimes captured).
+stratford_tfl_sf <- tfl_jub_sf %>% 
+  filter(commonName == "Stratford Underground Station")
+
+# extract bb of stratford to create a mini study region.
+bb_sf <- stratford_osm_sf %>%
+  st_transform(crs = 4326) %>% 
+  st_bbox() 
+
+# Retrieve coordinates into list.
+strat_bb <- c(bb_sf[[1]], bb_sf[[2]], bb_sf[[3]], bb_sf[[4]])
+
+# Get building footprints.
+strat_fp_sf <- opq(strat_bb) %>%
+    add_osm_feature(key = 'building') %>% 
+    osmdata_sf()
+
+# Polygons only. We can see from the 'building' description that this is the train station.
+strat_fp_poly_sf <- strat_fp_sf$osm_polygons
+
+# Save them.
+# st_write(obj = strat_fp_poly_sf, dsn = "data/stratford_osm.shp")
+
+# Get the crimes that OSM managed to capture.
+strat_osm_btp_sf <- st_intersection(stratford_osm_sf, btp_sf)
+
+# Make WGS 84 to match OSM data.
+strat_fp_poly_sf <- st_transform(strat_fp_poly_sf, 27700)
+
+# Quick plot.
+strat_gg <- ggplot() +
+  # theme_bw() +
+  geom_sf(data = strat_fp_poly_sf, fill = "black") +
+  geom_sf(data = stratford_osm_sf, fill = "pink", alpha = 0.3) +
+  geom_sf(data = stratford_tfl_sf, fill = "blue", alpha = 0.3) +
+  geom_sf(data = strat_osm_btp_sf, col = "Red") +
+  theme(axis.text = element_text(size = 6))
+
+ggsave(plot = strat_gg, file = "img/stratford.png", width = 12, height = 14, unit = "cm")  
+
+
 # Check names
-tfl_jub_df <- tfl_jub_sf %>% 
-  mutate(name = str_remove(commonName, "Underground Station")) %>% 
-  as_tibble()
+# tfl_jub_df <- tfl_jub_sf %>% 
+#   mutate(name = str_remove(commonName, "Underground Station")) %>% 
+#   as_tibble()
+# 
+# osm_jub_df <- osm_jub_sf %>% 
+#   as_tibble() %>% 
+#   select(name)
+# 
+# # Join to demo that names match perfectly.
+# names_df <- left_join(tfl_jub_df, osm_jub_df, by = "name")
 
-osm_jub_df <- osm_jub_sf %>% 
-  as_tibble() %>% 
-  select(name)
+strat_fp_sf <- opq(strat_bb) %>%
+  add_osm_feature(key = 'railway') %>% 
+  osmdata_sf()
 
-# Join to demo that names match perfectly.
-names_df <- left_join(tfl_jub_df, osm_jub_df, by = "name")
+lines <- strat_fp_sf$osm_lines
+
+lines <- st_transform(lines, 27700)
+
+plot(st_geometry(strat_fp_poly_sf))
+plot(st_geometry(lines), add = T, col = "Red")
+
+test <- st_intersection(strat_fp_poly_sf, lines)
+
+plot(st_geometry(strat_fp_poly_sf))
+plot(st_geometry(test), add = T, col = "Red")
 
 
+
+lines_cropped <- st_crop(lines, st_bbox(strat_fp_poly_sf))
