@@ -155,12 +155,12 @@ strat_fp_poly_sf <- st_transform(strat_fp_poly_sf, 27700)
 
 # Quick plot.
 strat_gg <- ggplot() +
-  # theme_bw() +
   geom_sf(data = strat_fp_poly_sf, fill = "black") +
-  geom_sf(data = stratford_osm_sf, fill = "pink", alpha = 0.3) +
-  geom_sf(data = stratford_tfl_sf, fill = "blue", alpha = 0.3) +
-  geom_sf(data = strat_osm_btp_sf, col = "Red") +
+  geom_sf(data = stratford_osm_sf, fill = "#440154FF", alpha = 0.3) +
+  geom_sf(data = stratford_tfl_sf, fill = "#FDE725FF", alpha = 0.3) +
+  geom_sf(data = strat_osm_btp_sf, col = "#3CBC75FF") +
   theme(axis.text = element_text(size = 6))
+strat_gg
 
 ggsave(plot = strat_gg, file = "img/stratford.png", width = 12, height = 14, unit = "cm")  
 

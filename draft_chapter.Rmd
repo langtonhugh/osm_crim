@@ -329,7 +329,7 @@ osm_jub_sf <- osm_stat_sf %>%
 
 This gives us Open Street Map data on all 27 stations on the Jubilee underground line. Now we have all our open datasets loaded into the R environment!
 
-## Cleaning, wrangling, and visualising our data
+## Cleaning, wrangling, and visualizing our data
 
 Obtaining open data from a direct download or API is often only half the battle. It doesn't necessarily mean that the data is in the shape needed to conduct analysis. The first thing to do once we have acquired open data is investigate it using data cleaning, wrangling, and visualization. 
 We've already loaded the `osmdata` and `dplyr` packages, but here, we will also make use of `ggplot2`, `sf`, `tidyr` and `patchwork`, so load these now. Remember, if you do not have these packages installed, use the `install.packages()` function prior to loading each one with `library()`.
@@ -380,10 +380,10 @@ We can now plot the Open Street Map station points, which are already spatial, o
 ```{r mapline}
 ggplot() +
   geom_sf(data = tfl_jub_sf) +
-  geom_sf(data = osm_jub_sf, color = "red", alpha = 0.5) 
+  geom_sf(data = osm_jub_sf, col = "red", alpha = 0.5) 
 ```
 
-As we can see, the two data sources appear to be broadly comparable in terms of their spatial patterning. However, the exact location of stations differs between Open Street Map and TfL. Determining a single pinpoint location for underground stations is not straightforward, especially for larger stations which have multiple entrances, platforms, and walkway tunnels. For operational purposes, TfL might have a specific definition for the location of a station, such as its centroid, which has been systematically applied to create the coordinates. The data pulled from Open Street Map might have been compiled by a volunteer contributor with their own perception of how to define the location of a station, such as the ticket booth or the main entrance. This definition _might_ be more theoretically meaningful than that used by TfL, since it could reflect a realistic 'on the ground' perception of the station's built environment, and thus opportunities for crime. On the other hand, if the locations from Open Street Map were collated by multiple different contributors, each with their own idea of where each station lies on the line, we might conclude that the measure is unreliable. These kinds of questions demonstrate why critically engaging with open data sources is so crucial, but also challenging. We return to this at the end of the exercise.
+As we can see, the two data sources appear to be broadly comparable in terms of their spatial patterning. However, the exact location of stations sometimes differs between Open Street Map and TfL. Determining a single pinpoint location for underground stations is not straightforward, especially for larger stations which have multiple entrances, platforms, and walkway tunnels. For operational purposes, TfL might have a specific definition for the location of a station, such as its centroid, which has been systematically applied to create the coordinates. The data pulled from Open Street Map might have been compiled by a volunteer contributor with their own perception of how to define the location of a station, such as the ticket booth or the main entrance. This definition _might_ be more theoretically meaningful than that used by TfL, since it could reflect a realistic 'on the ground' perception of the station's built environment, and thus opportunities for crime. On the other hand, if the locations from Open Street Map were collated by multiple different contributors, each with their own idea of where each station lies on the line, we might conclude that the measure is unreliable. These kinds of questions demonstrate why critically engaging with open data sources is so crucial, but also challenging. We return to this at the end of the exercise.
 
 Given the differences observed between the two open data sources, what might the impact be when studying crime in and around London Underground stations? For that, we can turn to our British Transport Police data. In its raw form, this data is a standard data frame, but we can make it spatial using some of the functions from the `sf` package that we used earlier, after first dropping crimes that have incomplete coordinates.
 
@@ -489,20 +489,21 @@ strat_osm_btp_sf <- st_intersection(stratford_osm_sf, btp_sf)
 
 # Visualize the building footprints, Open Street Map buffer, TfL buffer, and crime
 # locations. Note that the single point for the crimes is due to the approximation!
-# There are actually multiple crimes.
+# There are actually multiple crimes. Colors have been manually selected
+# from the viridis package to be easier to read by those with colorblindness.
 ggplot() +
-  theme_bw() +
   geom_sf(data = strat_fp_poly_sf, fill = "black") +
-  geom_sf(data = stratford_osm_sf, fill = "pink", alpha = 0.3) +
-  geom_sf(data = stratford_tfl_sf, fill = "blue", alpha = 0.3) +
-  geom_sf(data = strat_osm_btp_sf, col = "red") 
+  geom_sf(data = stratford_osm_sf, fill = "#440154FF", alpha = 0.3) +
+  geom_sf(data = stratford_tfl_sf, fill = "#FDE725FF", alpha = 0.3) +
+  geom_sf(data = strat_osm_btp_sf, col = "#3CBC75FF", fill = "white") +
+  theme(axis.text = element_text(size = 6))
 ```
 
 ```{r strat, echo = F}
 knitr::include_graphics("img/stratford.png")
 ```
 
-This quick check has shed some light on what is happening. The buffer generated from the TfL station location (in blue) covers a different part of the station to the Open Street Map buffer (in pink). The latter covers most of the main station building, while the former centers around the platforms to the north. Because the British Transport Police crime locations have been geocoded to a location in the main station building (in red), the TfL buffer has missed them. If we had used a larger buffer, it is likely that the TfL location would have captured the crime cluster, but then we would increase the risk of picking up crimes outside of the station. In many cases, there will not be an obvious 'right or wrong' answer to determine which open data source is most appropriate, but investigations like this one will help inform the decision. We might consider investigating other stations before deciding on which data to use, and ensure that findings are reported transparently with reference to these discussions.
+This quick check has shed some light on what is happening. The buffer generated from the TfL station location (in yellow) covers a different part of the station to the Open Street Map buffer (in blue). The latter covers most of the main station building, while the former centers around the platforms to the north. Because the British Transport Police crime locations have been geocoded to a location in the main station building (in green) the TfL buffer has missed them. If we had used a larger buffer, it is likely that the TfL location would have captured the crime cluster, but then we would increase the risk of picking up crimes outside of the station. In many cases, there will not be an obvious 'right or wrong' answer to determine which open data source is most appropriate, but investigations like this one will help inform the decision. We might consider investigating other stations before deciding on which data to use, and ensure that findings are reported transparently with reference to these discussions.
 
 Engaging with the creators of the data would also be an important step in answering the critical questions ('Where', 'Why', 'Who', 'What' and 'When') posed at the beginning of this chapter. For TfL, this might mean investigating the criteria used by their analysts to define the coordinates for stations. For Open Street Map, its online transparency means that we could find out which user(s) recorded the Jubilee station locations, and directly contact this community of volunteers to find out how station locations were recorded and why.
 
@@ -518,5 +519,14 @@ This chapter has sought to introduce open data as a novel, growing and invaluabl
 As it stands, open data represents a key resource in crime and place research. It is a fundamental component in the movement towards transparent and reproducible scientific research. The skills required to effectively access and use open data, such as those demonstrated in this chapter, are increasingly being taught and deployed in social science. The number and quality of open data resources is also improving, many of which will help illuminate key topics in spatial criminology. For instance, information about building construction in Greater London is currently being collected through a crowdsourced platform, _Colouring London_ [@hudson2018colouring], opening prospect for studies to investigate historical urban development and crime concentrations in the capital, unrestricted by fees or strict terms, for the first time. But, as the discussions and demonstrations in this chapter have shown, there is still a long way to go. As with any emerging domain, open data sources vary considerably in their degree of completeness and reliability. Whilst this can offer insight, for instance, in terms of public participation and sense of community, it can also represent a significant obstacle to empirical analysis. A key challenge for the future will be to ensure that students and research practitioners ask critical questions of their data before blindly delving into analysis and public dissemination. Moreover, the longevity of open data licences remains an unknown parameter. With so much open data being distributed by the public sector, the accessibility of open information is subject to fluctuations in the amount of resource (and goodwill) available to safe-guard continuity. One way of justifying the continued collection and distribution of open public sector data is simply to use the data for public good, such as informing interventions which help reduce crime victimization.
 
 \newpage
+
+# Software
+
+As noted in the tutorial, a number of R packages were used to create the material in this chapter. Packages _readr_ [@readrpack] and _jsonlite_ [@jsonlitepack] were used for reading and parsing data, _osmdata_ for querying the Open Street Map API [@osmdatapack], _sf_ for handling and visualizing spatial data [@sfpack], _dplyr_ and _tidyr_ for wrangling data [@dplyrpack; @tidyrpack], _ggplot2_ for visualization [@ggplotpack] and _patchwork_ for arranging plots [@patchworkpack]. The document itself was prepared using _rmarkdown_ [@rmarkdownpack].
+
+\newpage
+
+
+
 
 # References
