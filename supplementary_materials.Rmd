@@ -55,7 +55,9 @@ This indicates that although we get a latitude and longitude coordinate with eac
 
 To then download some data, move on to clicking on the "Data" tab. This should open a page entitled "Data downloads" under which you can see another five tabs: "Custom download", "Archive", "Boundaries", "Open data", and "Statistical data".  By staying on this "Custom download" page you can select what sort of data you want to download. We can select the time period and police force of interest, and the type of information required (e.g. crimes, stop and search, outcomes). We are also informed that the data are downloaded in comma-separated values format (.csv file extension), which meets our machine-readable, easy-to-manipulate data format requirements. 
 
-For this exercise, we are going to use British Transport Police data, a force which operates on railways and light-rail systems across the country, for the month of January in 2020. Select the time period using the dropdown menus, the force using the tickboxes, and then generate and download the file. 
+For this exercise, we are going to use British Transport Police data, a force which operates on railways and light-rail systems across the country, for the month of January in 2020. Select the time period using the dropdown menus, the force using the tickboxes (see Figure 1), and then generate and download the file.
+
+[INSERT FIGURE 1 HERE]
 
 Save this file locally (in your working directory) to a subfolder named "data". You can load it in with the `read_csv()` command from the `readr` package. Remember that you will need to load it first using `library()`. 
 
@@ -89,9 +91,9 @@ Here, we will make a direct request to the API created by London's local governm
 They further provide a documentation page with examples of how you can use HTTP (i.e. web link) requests to make calls to the API (see: https://api-portal.tfl.gov.uk/docs). If you follow this link you should see a page titled "Our Unified API" and some examples of calls. To draw conclusions about crimes in and around London Underground stations, we will need some spatial data about the stations themselves. 
 
 
-In the documentation, there is a section called 'API area' which offers some guidance on the types of data available. Scroll down and find the example called _Stops_. You will see that this call returns information on stops for buses or London Underground lines, and there are two examples (bus route 24 and the Bakerloo line). Copy their demonstration URL for the bakerloo line (https://api.tfl.gov.uk/line/bakerloo/stoppoints) and paste it into your web browser. When you visit this page, you should see something like Figure 1.
+In the documentation, there is a section called 'API area' which offers some guidance on the types of data available. Scroll down and find the example called _Stops_. You will see that this call returns information on stops for buses or London Underground lines, and there are two examples (bus route 24 and the Bakerloo line). Copy their demonstration URL for the bakerloo line (https://api.tfl.gov.uk/line/bakerloo/stoppoints) and paste it into your web browser. When you visit this page, you should see something like Figure 2.
 
-[INSERT FIGURE 1 HERE]
+[INSERT FIGURE 2 HERE]
 
 Although this contains the information we requested, it is not very legible for our human eyes. It is in a format called _JSON_. This stands for JavaScript Object Notation. JSON is an open standard way of storing and exchanging data, and will most likely be the format in which data are returned from most API calls. As you can see, it is not intuitive to read in its current format _but_ it is machine-readable friendly, which again aligns well with our requirements for open data. 
 
@@ -214,14 +216,14 @@ tfl_jub_sf <- api_call %>%
   st_transform(27700)
 ```
 
-We can now easily visualize this data (see Figure 2) using the `ggplot2` package, which is compatible with `sf` objects.
+We can now easily visualize this data (see Figure 3) using the `ggplot2` package, which is compatible with `sf` objects.
 
 ```{r tflmap, eval = F}
 ggplot(tfl_jub_sf) +
   geom_sf()
 ```
 
-[INSERT FIGURE 2 HERE]
+[INSERT FIGURE 3 HERE]
 
 There we have it: with just a few lines of code in R, we have queried the TfL API, a public sector source of open data, and plotted a basic map of stations on the Jubilee underground line.
 
@@ -236,7 +238,7 @@ st_write(obj = tfl_jub_sf, dsn = "data/jubilee_tfl.shp")
 
 ### Visualise to check and compare our datasets
 
-We can now plot the Open Street Map station points, which are already spatial, over these station locations pulled from the TfL API, to see how the two datasets compare (see Figure 3).
+We can now plot the Open Street Map station points, which are already spatial, over these station locations pulled from the TfL API, to see how the two datasets compare (see Figure 4).
 
 ```{r mapline, eval = F}
 ggplot() +
@@ -244,7 +246,7 @@ ggplot() +
   geom_sf(data = osm_jub_sf, col = "red", alpha = 0.5) 
 ```
 
-[INSERT FIGURE 3 HERE]
+[INSERT FIGURE 4 HERE]
 
 As we can see, the two data sources appear to be broadly comparable in terms of their spatial patterning. However, the exact location of stations sometimes differs between Open Street Map and TfL. Determining a single pinpoint location for underground stations is not straightforward, especially for larger stations which have multiple entrances, platforms, and walkway tunnels. For operational purposes, TfL might have a specific definition for the location of a station, such as its centroid, which has been systematically applied to create the coordinates. The data pulled from Open Street Map might have been compiled by a volunteer contributor with their own perception of how to define the location of a station, such as the ticket booth or the main entrance. This definition _might_ be more theoretically meaningful than that used by TfL, since it could reflect a realistic 'on the ground' perception of the station's built environment, and thus opportunities for crime. On the other hand, if the locations from Open Street Map were collated by multiple different contributors, each with their own idea of where each station lies on the line, we might conclude that the measure is unreliable. These kinds of questions demonstrate why critically engaging with open data sources is so crucial, but also challenging. We return to this at the end of the exercise.
 
@@ -274,7 +276,7 @@ tfl_jub_sf <- tfl_buff_sf %>%
   mutate(crimes = lengths(st_intersects(tfl_buff_sf, btp_sf)))
 ```
 
-We can then visualize these counts and compare the two sources of data by coloring in our buffers according to the crime count (see Figure 4). Note that we arrange the plots using syntax available using the `patchwork` package, and set the scales to be comparable using the `lim` argument within `scale_color_viridis_c()`.
+We can then visualize these counts and compare the two sources of data by coloring in our buffers according to the crime count (see Figure 5). Note that we arrange the plots using syntax available using the `patchwork` package, and set the scales to be comparable using the `lim` argument within `scale_color_viridis_c()`.
 
 ```{r crimemapcompare, eval = F}
 p1 <- ggplot(data = osm_jub_sf) +
@@ -290,11 +292,11 @@ p2 <- ggplot(data = tfl_jub_sf) +
 p1 / p2
 ```
 
-[INSERT FIGURE 4 HERE]
+[INSERT FIGURE 5 HERE]
 
 A number of factors emerge from this investigation. First, there is a disparity between the total number of crimes captured by the buffers in each dataset. Using the Open Street Map data, a total of `r sum(osm_jub_sf$crimes)` crimes were recorded across all stations on the line. Using the TfL data, only `r sum(tfl_jub_sf$crimes)` were recorded. Thus, the volume of crime observed in and around Jubilee stations during January will differ depending on the open data source being used. This could have important implications for how community and policing resources are distributed between underground lines. Second, the spatial patterning of crime hotspots on the line differs considerably between the two data sources. Using the Open Street Map data, the final station on the line, Stratford, has the greatest concentration of crimes, whereas the TfL data suggests that the most problematic station is Green Park, in the city centre. Despite the minor differences in the locations of each station, the conclusions drawn are starkly different, and would determine the consistency of findings with existing research examining crime at underground stations [@ceccato2013security].
 
-We can explore Stratford station as a potential crime hotspot using some of the skills we have learnt so far. One useful first step might to visualize the built environment around the station, along with the crime buffers from Open Street Map and TfL respectively, and the crime locations themselves (see Figure 5). This way, we might find out why the TfL buffer is failing to capture any crimes, while the Open Street Map buffer is capturing an apparent crime hotspot. In doing so, it is worth remembering that crime locations in open police data are approximations of the real geography in order to ensure anonymity. 
+We can explore Stratford station as a potential crime hotspot using some of the skills we have learnt so far. One useful first step might to visualize the built environment around the station, along with the crime buffers from Open Street Map and TfL respectively, and the crime locations themselves (see Figure 6). This way, we might find out why the TfL buffer is failing to capture any crimes, while the Open Street Map buffer is capturing an apparent crime hotspot. In doing so, it is worth remembering that crime locations in open police data are approximations of the real geography in order to ensure anonymity. 
 
 
 ```{r, eval = F}
@@ -344,7 +346,7 @@ ggplot() +
   theme(axis.text = element_text(size = 6))
 ```
 
-[INSERT FIGURE 5 HERE]
+[INSERT FIGURE 6 HERE]
 
 This quick check has shed some light on what is happening. The buffer generated from the TfL station location (in yellow) covers a different part of the station to the Open Street Map buffer (in blue). The latter covers most of the main station building, while the former centers around the platforms to the north. Because the British Transport Police crime locations have been geocoded to a location in the main station building (in green) the TfL buffer has missed them. If we had used a larger buffer, it is likely that the TfL location would have captured the crime cluster, but then we would increase the risk of picking up crimes outside of the station. In many cases, there will not be an obvious 'right or wrong' answer to determine which open data source is most appropriate, but investigations like this one will help inform the decision. We might consider investigating other stations before deciding on which data to use, and ensure that findings are reported transparently with reference to these discussions.
 
