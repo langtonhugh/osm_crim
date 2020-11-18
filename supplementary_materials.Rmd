@@ -352,11 +352,13 @@ Engaging with the creators of the data would also be an important step in answer
 
 \newpage
 
-# Learn more about it
-
 # Software
 
-As noted in the tutorial, a number of R packages were used to create the material in this chapter. Packages _readr_ [@readrpack] and _jsonlite_ [@jsonlitepack] were used for reading and parsing data, _osmdata_ for querying the Open Street Map API [@osmdatapack], _sf_ for handling and visualizing spatial data [@sfpack], _dplyr_ and _tidyr_ for wrangling data [@dplyrpack; @tidyrpack], _ggplot2_ for visualization [@ggplotpack] and _patchwork_ for arranging plots [@patchworkpack]. The document itself was prepared using _rmarkdown_ [@rmarkdownpack].
+As noted in the tutorial, a number of R packages were used to create the material in this chapter. Packages _readr_ [@readrpack] and _jsonlite_ [@jsonlitepack] were used for reading and parsing data, _osmdata_ for querying the Open Street Map API [@osmdatapack], _sf_ for handling and visualizing spatial data [@sfpack], _dplyr_ and _tidyr_ for wrangling data [@dplyrpack; @tidyrpack], _ggplot2_ for visualization [@ggplotpack] and _patchwork_ for arranging plots [@patchworkpack]. The draft versions of the book chapter and supplementary material were prepared using _rmarkdown_ [@rmarkdownpack].
+
+# Learn more about it
+
+A useful resource going forward is the _Open Data Handbook_ which can be found online for free (https://opendatahandbook.org/). It provides introductory information (e.g. definitions), advice (e.g. legal, technical details), case studies which showcase the societal value of open data, and an e-library of papers, presentations and videos on open data. It is one of many projects organized by the _Open Knowledge Foundation_. Another comprehensive and free online resource is the _Open Data Institute_ website (https://theodi.org/). Their mission is to demonstrate the positive value of open data and advocate for its ethical creation and usage by working with companies and governments around the globe. For resources geared towards R, _rOpenSci_ (https://ropensci.org/) develop packages and offer an infrastructure and community to promote the accessible usage of R for open scientific research. The official _RStudio_ webpage (https://rstudio.com/about/) also provides a wealth of information and freely available resources for making the most of the software.
 
 \newpage
 
