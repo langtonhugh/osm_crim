@@ -125,7 +125,7 @@ Finally, we will look at how open data can be obtained using API wrappers. Often
 To demonstrate this, we will be accessing data from Open Street Map, a database of geospatial information built by a community of mappers, enthusiasts and members of the public, who contribute and maintain data about all sorts of environmental features, such as roads, green spaces, restaurants and railway stations, amongst many other things, all over the world. As such, it is a prime example of 'crowdsourced' open data. You can view the information contributed to Open Street Map using their online mapping platform (https://www.openstreetmap.org/). The result of people's contributions is a database of spatial information rich in local knowledge which provides invaluable information about places and their features, without being subject to strict terms on usage. 
 
 
-Open Street Map has two main types of wrappers available for its API, a web-based GUI called Overpass Turbo (https://overpass-turbo.eu/), and an R package called `osmdata`. 
+Two main types of wrappers available for the Open Street Map API are a web-based GUI called Overpass Turbo (https://overpass-turbo.eu/) and an R package called `osmdata`. 
 
 If we load the package `osmdata` we can use its functions to query the Open Street Map API, rather than the API query being made directly (like we did for TfL, using the URL). Once again, we will want to identify documentation which can help us understand and critique our data, and learn how to query it. When it comes to Open Street Map, you can read all about it on their community page: [https://www.openstreetmap.org/about](https://www.openstreetmap.org/about). Using the wrapper in R, we can refer to the package documentation and the associated vignette online: [https://cran.r-project.org/web/packages/osmdata/vignettes/osmdata.html](https://cran.r-project.org/web/packages/osmdata/vignettes/osmdata.html). 
 
@@ -159,7 +159,7 @@ osm_stat_sf <- opq(bbox = bb_gl) %>%                               # bounding bo
   osmdata_sf()                                                     # specify class
 ```
 
-The resulting object `osm_stat_sf` contains lots of information. We can view the contents of the object by simply executing the object name into the **Console**.
+The resulting object `osm_stat_sf` contains lots of information. We can view the contents of the object by simply executing the object name into the R Console.
 
 ```{r printstations}
 osm_stat_sf
@@ -242,8 +242,8 @@ We can now plot the Open Street Map station points, which are already spatial, o
 
 ```{r mapline, eval = F}
 ggplot() +
-  geom_sf(data = tfl_jub_sf) +
-  geom_sf(data = osm_jub_sf, col = "red", alpha = 0.5) 
+  geom_sf(data = osm_jub_sf) +
+  geom_sf(data = tfl_jub_sf, color = "red", alpha = 0.5)  
 ```
 
 [INSERT FIGURE 4 HERE]
@@ -309,14 +309,14 @@ stratford_tfl_sf <- tfl_jub_sf %>%
   filter(commonName == "Stratford Underground Station")
 
 # Create a mini study area for our visualization, by getting the bounding box for the
-# Open Street Map (or TfL) buffer. Note that we transform to WGS 84 first in preperation
-# for the Open Street Map API.
+# Open Street Map (or TfL) buffer. Note that we transform to WGS 84 first in
+# preperation for the Open Street Map API.
 bb_sf <- stratford_osm_sf %>%
   st_transform(crs = 4326) %>% 
   st_bbox() 
 
-# Retrieve the coordinates of the bounding box, and create a numeric list for use with
-# osmdata package.
+# Retrieve the coordinates of the bounding box, and create a numeric list for use
+# with osmdata package.
 strat_bb <- c(bb_sf[[1]], bb_sf[[2]], bb_sf[[3]], bb_sf[[4]])
 
 # Pull building footprints in this bounding box from the Open Street Map API.
@@ -352,7 +352,7 @@ This quick check has shed some light on what is happening. The buffer generated 
 
 In many cases, there will not be an obvious 'right or wrong' answer to determine which open data source is most appropriate, but investigations like this one will help inform the decision. We might consider investigating other stations before deciding on which data to use, and ensure that findings are reported transparently with reference to these discussions.
 
-Engaging with the creators of the data would also be an important step in answering the critical questions ('Where', 'Why', 'Who', 'What' and 'When') posed at the beginning of this chapter. For TfL, this might mean investigating the criteria used by their analysts to define the coordinates for stations. For Open Street Map, its online transparency means that we could find out which user(s) recorded the Jubilee station locations, and directly contact this community of volunteers to find out how station locations were recorded and why.
+Engaging with the creators of the data would also be an important step in answering the critical questions ('Where', 'Why', 'Who', 'What' and 'When') posed in the book chapter. For TfL, this might mean investigating the criteria used by their analysts to define the coordinates for stations. For Open Street Map, its online transparency means that we could find out which user(s) recorded the Jubilee station locations, and directly contact this community of volunteers to find out how station locations were recorded and why.
 
 \newpage
 
@@ -362,7 +362,7 @@ As noted in the tutorial, a number of R packages were used to create the materia
 
 # Learn more about it
 
-A useful resource going forward is the _Open Data Handbook_ which can be found online for free (https://opendatahandbook.org/). It provides introductory information (e.g. definitions), advice (e.g. legal, technical details), case studies which showcase the societal value of open data, and an e-library of papers, presentations and videos on open data. It is one of many projects organized by the _Open Knowledge Foundation_. Another comprehensive and free online resource is the _Open Data Institute_ website (https://theodi.org/). Their mission is to demonstrate the positive value of open data and advocate for its ethical creation and usage by working with companies and governments around the globe. For resources geared towards R, _rOpenSci_ (https://ropensci.org/) develop packages and offer an infrastructure and community to promote the accessible usage of R for open scientific research. The official _RStudio_ webpage (https://rstudio.com/about/) also provides a wealth of information and freely available resources for making the most of the software.
+A useful resource going forward is the _Open Data Handbook_ which can be found online for free (https://opendatahandbook.org/). It provides introductory information (e.g. definitions), advice (e.g. legal, technical details), case studies which showcase the societal value of open data, and an e-library of papers, presentations and videos on open data. It is one of many projects organized by the Open Knowledge Foundation. Another comprehensive and free online resource is the _Open Data Institute_ website (https://theodi.org/). Their mission is to demonstrate the positive value of open data and advocate for its ethical creation and usage by working with companies and governments around the globe. For resources geared towards R, _rOpenSci_ (https://ropensci.org/) develop packages and offer an infrastructure and community to promote the accessible usage of R for open scientific research. The official _RStudio_ webpage (https://rstudio.com/about/) also provides a wealth of information and freely available resources for making the most of the software.
 
 \newpage
 
