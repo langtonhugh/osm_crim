@@ -299,7 +299,7 @@ A number of factors emerge from this investigation. First, there is a disparity 
 We can explore Stratford station as a potential crime hotspot using some of the skills we have learnt so far. One useful first step might to visualize the built environment around the station, along with the crime buffers from Open Street Map and TfL respectively, and the crime locations themselves (see Figure 6). This way, we might find out why the TfL buffer is failing to capture any crimes, while the Open Street Map buffer is capturing an apparent crime hotspot. In doing so, it is worth remembering that crime locations in open police data are approximations of the real geography in order to ensure anonymity. 
 
 
-```{r, eval = F}
+```{r stratford, eval = F}
 # Retrieve Stratford buffer from Open Street Map.
 stratford_osm_sf <- osm_jub_sf %>% 
   filter(name == "Stratford")
@@ -337,7 +337,7 @@ strat_osm_btp_sf <- st_intersection(stratford_osm_sf, btp_sf)
 # Visualize the building footprints, Open Street Map buffer, TfL buffer, and crime
 # locations. Note that the single point for the crimes is due to the approximation!
 # There are actually multiple crimes. Colors have been manually selected
-# from the viridis package to be easier to read by those with colorblindness.
+# from the viridis package simply to identify each object individually.
 ggplot() +
   geom_sf(data = strat_fp_poly_sf, fill = "black") +
   geom_sf(data = stratford_osm_sf, fill = "#440154FF", alpha = 0.3) +
@@ -348,7 +348,9 @@ ggplot() +
 
 [INSERT FIGURE 6 HERE]
 
-This quick check has shed some light on what is happening. The buffer generated from the TfL station location (in yellow) covers a different part of the station to the Open Street Map buffer (in blue). The latter covers most of the main station building, while the former centers around the platforms to the north. Because the British Transport Police crime locations have been geocoded to a location in the main station building (in green) the TfL buffer has missed them. If we had used a larger buffer, it is likely that the TfL location would have captured the crime cluster, but then we would increase the risk of picking up crimes outside of the station. In many cases, there will not be an obvious 'right or wrong' answer to determine which open data source is most appropriate, but investigations like this one will help inform the decision. We might consider investigating other stations before deciding on which data to use, and ensure that findings are reported transparently with reference to these discussions.
+This quick check has shed some light on what is happening. The buffer generated from the TfL station location (in yellow) covers a different part of the station to the Open Street Map buffer (in blue). The latter covers most of the main station building, while the former centers around the platforms to the north. Because the British Transport Police crime locations have been geocoded to a location in the main station building (in green) the TfL buffer has missed them. If we had used a larger buffer, it is likely that the TfL location would have captured the crime cluster, but then we would increase the risk of picking up crimes outside of the station. This also serves to highlight the limitations of the open crime data, because we cannot discern the _exact_ location of these crimes in the station. It is in fact plausible that some of these crimes did occur in the TfL buffer, but due to the process of anonymization, the points have been snapped the main station building.
+
+In many cases, there will not be an obvious 'right or wrong' answer to determine which open data source is most appropriate, but investigations like this one will help inform the decision. We might consider investigating other stations before deciding on which data to use, and ensure that findings are reported transparently with reference to these discussions.
 
 Engaging with the creators of the data would also be an important step in answering the critical questions ('Where', 'Why', 'Who', 'What' and 'When') posed at the beginning of this chapter. For TfL, this might mean investigating the criteria used by their analysts to define the coordinates for stations. For Open Street Map, its online transparency means that we could find out which user(s) recorded the Jubilee station locations, and directly contact this community of volunteers to find out how station locations were recorded and why.
 
