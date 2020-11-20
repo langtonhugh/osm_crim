@@ -242,8 +242,8 @@ We can now plot the Open Street Map station points, which are already spatial, o
 
 ```{r mapline, eval = F}
 ggplot() +
-  geom_sf(data = osm_jub_sf) +
-  geom_sf(data = tfl_jub_sf, color = "red", alpha = 0.5)  
+  geom_sf(data = tfl_jub_sf) +
+  geom_sf(data = osm_jub_sf, color = "red", alpha = 0.5) 
 ```
 
 [INSERT FIGURE 4 HERE]

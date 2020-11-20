@@ -45,10 +45,10 @@ osm_jub_sf <- osm_stat_sf %>%
 osm_jub_sf <- st_transform(osm_jub_sf, 27700)
 # bb_sf      <- st_transform(bb_sf, 27700)
 
-plot_1 <- ggplot() +
-  geom_sf(data = osm_jub_sf, size = 0.8)
+# plot_1 <- ggplot() +
+#   geom_sf(data = osm_jub_sf, size = 0.8)
 
-ggsave(plot = plot_1, filename = "img/fig2.tiff", device = "tiff", dpi = 1200, height = 7, width = 7)
+# ggsave(plot = plot_1, filename = "img/fig2.tiff", device = "tiff", dpi = 1200, height = 7, width = 7)
 # ggsave(plot = plot_1, filename = "img/fig1.eps", device = "eps", dpi = 1200)
 
 # TfL scrape ==============================================================================================
@@ -62,12 +62,22 @@ tfl_jub_sf <- api_call %>%
   st_as_sf(coords = c(x = "lon", y = "lat"), crs = 4326) %>% 
   st_transform(27700)
 
-# Plot difference.
-plot_2 <- ggplot() +
-  geom_sf(data = osm_jub_sf) +
-  geom_sf(data = tfl_jub_sf, color = "red", alpha = 0.5) 
+# Plot TfL.
+fig3 <- ggplot() +
+  geom_sf(data = tfl_jub_sf)
 
-ggsave(plot = plot_2, filename = "img/fig3.tiff", device = "tiff", dpi = 1200, height = 7, width = 7)
+ggsave(plot = fig3, filename = "img/fig3.tiff", device = "tiff", dpi = 1200, height = 7, width = 7)
+
+
+
+
+# Plot difference.
+fig4 <- ggplot() +
+  geom_sf(data = tfl_jub_sf) +
+  geom_sf(data = osm_jub_sf, color = "red", alpha = 0.5) 
+fig4
+
+ggsave(plot = fig4, filename = "img/fig4.tiff", device = "tiff", dpi = 1200, height = 7, width = 7)
 
 # Save before someone changes the lines.
 # temp_osm_jub_sf <- osm_jub_sf %>% 
@@ -108,9 +118,9 @@ p2 <- ggplot(data = tfl_jub_sf) +
   labs(title = "Transport for London") +
   scale_colour_viridis_c(lim = c(0,42))
 
-plot_3 <- p1 / p2
+fig5 <- p1 / p2
 
-ggsave(plot = plot_3, filename = "img/fig4.tiff", device = "tiff", dpi = 1200, height = 7, width = 7)
+ggsave(plot = fig5, filename = "img/fig5.tiff", device = "tiff", dpi = 1200, height = 7, width = 7)
 
 sum(osm_jub_sf$crimes) # 168
 sum(tfl_jub_sf$crimes) # 136
@@ -160,15 +170,15 @@ strat_osm_btp_sf <- st_intersection(stratford_osm_sf, btp_sf)
 strat_fp_poly_sf <- st_transform(strat_fp_poly_sf, 27700)
 
 # Quick plot.
-plot_4 <- ggplot() +
+fig6 <- ggplot() +
   geom_sf(data = strat_fp_poly_sf, fill = "black") +
   geom_sf(data = stratford_osm_sf, fill = "#440154FF", alpha = 0.3) +
   geom_sf(data = stratford_tfl_sf, fill = "#FDE725FF", alpha = 0.3) +
   geom_sf(data = strat_osm_btp_sf, col = "#3CBC75FF") +
   theme(axis.text = element_text(size = 6))
 
-ggsave(plot = plot_4, filename = "img/stratford.png", width = 12, height = 14)  
-ggsave(plot = plot_4, filename = "img/fig5.tiff", device = "tiff", dpi = 1200, height = 7, width = 7)
+# ggsave(plot = plot_4, filename = "img/stratford.png", width = 12, height = 14)  
+ggsave(plot = fig6, filename = "img/fig6.tiff", device = "tiff", dpi = 1200, height = 7, width = 7)
 
 # Check names
 # tfl_jub_df <- tfl_jub_sf %>% 
